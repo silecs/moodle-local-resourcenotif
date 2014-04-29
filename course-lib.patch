@@ -1,0 +1,22 @@
+diff --git a/course/lib.php b/course/lib.php
+index 37eb355..5a10256 100644
+--- a/course/lib.php
++++ b/course/lib.php
+@@ -2094,6 +2094,17 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
+         );
+     }
+ 
++    //patch for local_resourcenotif : begin
++    if ($mod->course != SITEID && $hasmanageactivities) {
++        $actions[] = new action_menu_link_secondary(
++            new moodle_url('/local/resourcenotif/resourcenotif.php', array('mod' => $mod->modname, 'id' => $mod->id)),
++            new pix_icon('t/email', get_string("notifications"), 'moodle', array('class' => 'iconsmall', 'title' => '')),
++            get_string("notifications"),
++            array('class' => 'editing_assign', 'title' => get_string("notifications"))
++        );
++    }
++    //patch end
++
+     // Delete.
+     if ($hasmanageactivities) {
+         $actions['delete'] = new action_menu_link_secondary(
