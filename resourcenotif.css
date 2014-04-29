@@ -1,0 +1,18 @@
+/**
+ * @package    local
+ * @subpackage resourcenotif
+ * @copyright  2012-2013 Silecs {@link http://www.silecs.info/societe}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+.cache {
+	display: none;
+}
+.notificationlabel {
+    margin-left:16%;
+}
+.notificationgras {
+    font-weight: 700;
+}
+#id_submitbutton {
+    font-weight: 700;
+}
