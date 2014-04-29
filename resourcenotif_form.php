@@ -29,12 +29,12 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
             'cols' => 80));
         $mform->setType('complement',PARAM_RAW);
 
-        $urlactivity = html_Writer::link($this->_customdata['urlactivite'], $this->_customdata['urlactivite']);
+        $urlactivity = html_writer::link($this->_customdata['urlactivite'], $this->_customdata['urlactivite']);
 
-        $htmlinfo = html_Writer::empty_tag('br');
-        $htmlinfo .= html_Writer::tag(
+        $htmlinfo = html_writer::empty_tag('br');
+        $htmlinfo .= html_writer::tag(
             'p',
-            $this->_customdata['coursepath'] .  html_Writer::empty_tag('br') . $urlactivity,
+            $this->_customdata['coursepath'] .  html_writer::empty_tag('br') . $urlactivity,
             array('class' => 'notificationlabel')
         );
 
