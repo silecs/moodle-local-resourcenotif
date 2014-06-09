@@ -11,8 +11,7 @@ $string['pluginname'] = 'Notification de ressource';
 $string['allstudentrecipient'] = 'Le message suivant sera transmis aux utilisateurs inscrits à ce cours ({$a}).';
 $string['body'] = 'Corps du message : ';
 $string['complement'] = 'Complément de message : ';
-$string['grouprecipient'] = 'Le message suivant sera transmis aux utilisateurs '
-    . 'concernés par <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest}).';
+$string['grouprecipient'] = 'Le message suivant sera transmis aux utilisateurs concernés par <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest}).';
 $string['nomessagesend'] = 'Aucun message envoyé.';
 $string['norecipient'] = 'Aucun destinataire';
 $string['numbernotification'] = 'Nombre de notifications envoyées : {$a}';
@@ -24,5 +23,4 @@ $string['submit'] = 'Envoyer';
 
 // The following strings are part of the sent message
 $string['notification'] = 'Notification : ';
-$string['msgsender'] = '{$a->sender} souhaite attirer votre attention sur l\'élément '
-    . '{$a->linkactivity} proposé au sein du cours {$a->linkcourse}.';
+$string['msgsender'] = '{$a->sender} souhaite attirer votre attention sur l\'élément {$a->linkactivity} proposé au sein du cours {$a->linkcourse}.';
