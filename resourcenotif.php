@@ -23,7 +23,9 @@ if (! $module = $DB->get_record($moduletype, array("id"=>$cm->instance))) {
     print_error('invalidcoursemodule');
 }
 
-require_login($course, true, $cm);
+require_login($course, false, $cm);
+$modcontext = context_module::instance($cm->id);
+require_capability('moodle/course:manageactivities', $modcontext);
 
 $url = new moodle_url('/local/resourcenotif/resourcenotif.php', array('mod' => $moduletype, 'id'=>$id));
 $PAGE->set_url($url);
