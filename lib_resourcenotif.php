@@ -36,22 +36,22 @@ function resourcenotif_get_notification_message($subject, $msgbodyinfo, $complem
  * construit le messsage d'interface du nombre et de la qualité des
  * destinataires du message
  * @param int $nbdest
- * @param int $groupingid
+ * @param string $availability
  * @param array $msgbodyinfo
  * @return string
  */
-function resourcenotif_get_recipient_label($nbdest, $groupingid, $msgbodyinfo) {
+function resourcenotif_get_recipient_label($nbdest, $availability, $msgbodyinfo) {
     if ($nbdest == 0) {
         return get_string('norecipient', 'local_resourcenotif');
     }
-    if ($groupingid == 0) {
-        return get_string('allstudentrecipient', 'local_resourcenotif', $nbdest);
-    } else {
+    if ($availability) {
         $a = new stdClass();
         $a->nbdest = $nbdest;
         $a->linkactivity = $msgbodyinfo['urlactivite'];
         $a->nameactivity = $msgbodyinfo['nomactivite'];
         return get_string('grouprecipient', 'local_resourcenotif', $a);
+    } else {
+        return get_string('allstudentrecipient', 'local_resourcenotif', $nbdest);
     }
 }
 

@@ -61,21 +61,17 @@ $PAGE->set_title(format_string($module->name));
 $PAGE->requires->css(new moodle_url('/local/resourcenotif/resourcenotif.css'));
 
 $recipicents = '';
-$students = array();
+$students = resourcenotif_get_users_from_course($course, 'student');
+$notifiedStudents = [];
 
-// le groupmode
-$groupmode = groups_get_activity_groupmode($cm);
+$modinfo = get_fast_modinfo($course)->get_cm($cm->id);
+$info = new \core_availability\info_module($modinfo);
+$notifiedStudents = $info->filter_user_list($students);
 
-if ($groupmode == 0) {
-    // pas de groupe, envoyé à tous les étudiants
-    $students = resourcenotif_get_users_from_course($course, 'student');
-    $recipicents = resourcenotif_get_recipient_label(count($students), $cm->groupingid, $msgbodyinfo);
-} elseif ($cm->groupingid != 0) {
-    //envoyé au groupe
-    $students = groups_get_grouping_members($cm->groupingid);
-    $recipicents = resourcenotif_get_recipient_label(count($students), $cm->groupingid, $msgbodyinfo);
-} else {
+if (count($notifiedStudents) == 0) {
     $recipicents = get_string('norecipient', 'local_resourcenotif');
+} else {
+    $recipicents = resourcenotif_get_recipient_label(count($notifiedStudents), $cm->availability, $msgbodyinfo);
 }
 
 $mform = new local_resourcenotif_resourcenotif_form(null,
@@ -93,7 +89,7 @@ if ($mform->is_cancelled()) {
 if ($formdata) {
     $msg = resourcenotif_get_notification_message($mailsubject, $msgbodyinfo, $formdata->complement);
     if (count($students)) {
-        $msgresult = resourcenotif_send_notification($students, $msg, $infolog);
+        $msgresult = resourcenotif_send_notification($notifiedStudents, $msg, $infolog);
     }
 }
 
