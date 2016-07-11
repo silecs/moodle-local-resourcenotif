@@ -15,15 +15,72 @@ require_once($CFG->libdir.'/formslib.php');
 
 class local_resourcenotif_resourcenotif_form extends moodleform {
     public function definition() {
+        global $CFG, $USER;
 
         $mform =& $this->_form;
+        $customdata = $this->_customdata;
 
         // hidden elements
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
-
         $mform->addElement('hidden', 'mod');
         $mform->setType('mod', PARAM_ALPHA);
+        $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
+
+        //recipients
+        $sendok = true;
+        $mform->addElement('header', 'recipient', 'Destinataires');
+        $optionsSendAll = [];
+        if ($customdata['nbNotifiedStudents'] == 0) {
+            $optionsSendAll = ['disabled' => 'disabled'];
+            $sendok = false;
+        }
+        $mform->addElement('radio', 'send', '', '<span class="fake-fitemtitle">' . $customdata['recipicents'] . '</span>', 'all', $optionsSendAll);
+        if($sendok) {
+            $mform->setDefault('send', 'all');
+        }
+
+        $allgroups = resourcenotif_get_all_groups($customdata['courseid']);
+        $allgroupings = resourcenotif_get_all_groupings($customdata['courseid']);
+        $selected = [];
+
+        if (count($allgroups)) {
+            $selectgroup = $mform->CreateElement('select','groups', 'Groupes', $allgroups);
+            $selectgroup->setMultiple(true);
+            $selected[] = $selectgroup;
+        }
+        if (count($allgroupings)) {
+            $selectgrouping = $mform->CreateElement('select','groupings', 'Groupements', $allgroupings);
+            $selectgrouping->setMultiple(true);
+            $selected[] = $selectgrouping;
+        }
+
+        if (count($selected)) {
+            $mform->addElement('radio', 'send', '', '<span class="fake-fitemtitle">ou aux membres des groupes/groupements séléctionnés : </span>', 'selection');
+            $mform->addGroup($selected, 'myselected', "", array('&nbsp;&nbsp;&nbsp;'), false);
+            $mform->disabledIf('myselected', 'send', 'eq', 'selection'); //ça ne marche pas
+            if ($sendok == false) {
+                $mform->setDefault('send', 'selection');
+                $sendok = true;
+            }
+        } else {
+            $mform->addElement('radio', 'send', '', '<span class="fake-fitemtitle">Aucun groupe/groupement</span>', 'selection', ['disabled' => 'disabled']);
+        }
+
+        //message
+        $mform->addElement('header', 'message', 'message');
+        $msghtml = '';
+        $senderlabel = html_writer::tag('span', get_string('sender', 'local_resourcenotif'), array('class' => 'notificationgras'));
+        $sender = $site->shortname . ' &#60;'. $CFG->noreplyaddress . '&#62;';
+        $msghtml .= html_writer::tag('p', $senderlabel . $sender, array('class' => 'notificationlabel'));
+        $msghtml .= html_writer::tag('p', get_string('subject', 'local_resourcenotif') . $customdata['mailsubject'], array('class' => 'notificationlabel'));
+        $msgbody = resourcenotif_get_email_body($customdata['msgbodyinfo'], 'html');
+        $msghtml .= html_writer::tag('p', get_string('body', 'local_resourcenotif'), array('class' => 'notificationlabel notificationgras'));
+        $msghtml .= html_writer::tag('p', $msgbody, array('class' => 'notificationlabel'));
+        $msghtml .= html_writer::tag('div', get_string('complement', 'local_resourcenotif'), array('class' => 'notificationlabel'));
+
+        $mform->addElement('html', $msghtml);
 
         $mform->addElement('textarea', 'complement', null, array('rows' => 3,
             'cols' => 80));
@@ -42,6 +99,27 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
 
         //-------------------------------------------------------------------------------
         // buttons
-        $this->add_action_buttons(true,  get_string('submit', 'local_resourcenotif'));
+        if ($sendok) {
+            $this->add_action_buttons(true,  get_string('submit', 'local_resourcenotif'));
+        }
+    }
+
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        if (empty($errors)) {
+            $this->validation_recipicent($data, $errors);
+        }
+        return $errors;
+    }
+
+    private function validation_recipicent($data, &$errors) {
+        if (isset($data['send']) == false) {
+            $errors['send'] = 'Veuillez sélectionner un destinataire';
+        } else {
+            if ($data['send'] == 'selection' && isset($data['groups']) == false && isset($data['groupings']) == false) {
+                 $errors['myselected'] = 'Veuillez sélectionner au moins un groupe/groupement';
+            }
+        }
+        return $errors;
     }
 }

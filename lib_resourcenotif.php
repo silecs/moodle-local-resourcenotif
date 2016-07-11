@@ -189,3 +189,63 @@ function resourcenotif_get_pathcategories_course($categories, $course) {
     $path .= $course->shortname;
     return $path;
 }
+
+/**
+ * Renvoie tous les groupes d'un cours
+ * @param int $courseid
+ * @return array groups
+ */
+function resourcenotif_get_all_groups($courseid) {
+    $groups = [];
+    $allgroups = groups_get_all_groups($courseid);
+    if (count($allgroups)) {
+        foreach ($allgroups as $id => $group) {
+            $groups[$id] = $group->name;
+        }
+    }
+    return $groups;
+}
+
+/**
+ * Retourne tous les groupements d'un cours
+ * @param int $courseid
+ * @return array $groupings
+ */
+function resourcenotif_get_all_groupings($courseid) {
+    $groupings = [];
+    $allgroupings = groups_get_all_groupings($courseid);
+    if (count($allgroupings)) {
+        foreach ($allgroupings as $id => $grouping) {
+            $groupings[$id] = $grouping->name;
+        }
+    }
+    return $groupings;
+}
+
+/**
+ * Renvoie le tableau des utilisateurs appartenant aux groupes $groups
+ * ou aux groupements $groupings
+ * @param array $groups
+ * @param array $groupings
+ * @return array $users
+ */
+function resourcenotif_get_users_recipicents($groups, $groupings) {
+    $users = [];
+    foreach ($groups as $groupid) {
+        $userg = groups_get_members($groupid);
+        foreach ($userg as $id => $u) {
+            if (isset($users[$id]) == false) {
+                $users[$id] = $u;
+            }
+        }
+    }
+    foreach ($groupings as $groupingid) {
+        $usergp = groups_get_grouping_members($groupingid);
+        foreach ($usergp as $id => $u) {
+            if (isset($users[$id]) == false) {
+                $users[$id] = $u;
+            }
+        }
+    }
+    return $users;
+}

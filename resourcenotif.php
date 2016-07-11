@@ -67,20 +67,23 @@ $notifiedStudents = [];
 $modinfo = get_fast_modinfo($course)->get_cm($cm->id);
 $info = new \core_availability\info_module($modinfo);
 $notifiedStudents = $info->filter_user_list($students);
+$nbNotifiedStudents = count($notifiedStudents);
 
-if (count($notifiedStudents) == 0) {
+if ($nbNotifiedStudents == 0) {
     $recipicents = get_string('norecipient', 'local_resourcenotif');
 } else {
-    $recipicents = resourcenotif_get_recipient_label(count($notifiedStudents), $cm->availability, $msgbodyinfo);
+    $recipicents = resourcenotif_get_recipient_label($nbNotifiedStudents, $cm->availability, $msgbodyinfo);
 }
 
-$mform = new local_resourcenotif_resourcenotif_form(null,
-    array('urlactivite' => $urlactivite, 'coursepath' => $coursepath));
+$infoform = ['urlactivite' => $urlactivite, 'coursepath' => $coursepath,
+    'courseid' => $course->id, 'recipicents' => $recipicents, 'nbNotifiedStudents' => $nbNotifiedStudents];
+$infoform['mailsubject'] = $mailsubject;
+$infoform['msgbodyinfo'] = $msgbodyinfo;
+$mform = new local_resourcenotif_resourcenotif_form(null, $infoform);
 
-$newformdata = array('id'=>$id, 'mod' => $moduletype);
+$newformdata = ['id'=>$id, 'mod' => $moduletype, 'courseid' => $course->id];
 $mform->set_data($newformdata);
 $formdata = $mform->get_data();
-
 
 if ($mform->is_cancelled()) {
     redirect($urlcourse);
@@ -88,8 +91,15 @@ if ($mform->is_cancelled()) {
 
 if ($formdata) {
     $msg = resourcenotif_get_notification_message($mailsubject, $msgbodyinfo, $formdata->complement);
-    if (count($students)) {
-        $msgresult = resourcenotif_send_notification($notifiedStudents, $msg, $infolog);
+    if ($formdata->send == 'all') {
+        if (count($notifiedStudents)) {
+            $msgresult = resourcenotif_send_notification($notifiedStudents, $msg, $infolog);
+        }
+    } elseif ($formdata->send == 'selection') {
+        $grpNotifiedStudents = resourcenotif_get_users_recipicents($course->id, $formdata->groups, $formdata->groupings);
+        if (count($grpNotifiedStudents)) {
+            $msgresult = resourcenotif_send_notification($grpNotifiedStudents, $msg, $infolog);
+        }
     }
 }
 
@@ -103,19 +113,6 @@ if ($msgresult != '') {
     echo html_writer::tag('p', html_writer::link($urlcourse, get_string('returncourse', 'local_resourcenotif')));
     echo $OUTPUT->box_end();
 } else {
-    echo html_writer::tag('p', $recipicents, array('class' => 'notificationlabel'));
-
-    $senderlabel = html_writer::tag('span', get_string('sender', 'local_resourcenotif'), array('class' => 'notificationgras'));
-    $sender = $site->shortname . ' &#60;'. $CFG->noreplyaddress . '&#62;';
-    echo html_writer::tag('p', $senderlabel . $sender, array('class' => 'notificationlabel'));
-
-    echo html_writer::tag('p', get_string('subject', 'local_resourcenotif') . $mailsubject, array('class' => 'notificationlabel'));
-
-    $msgbody = resourcenotif_get_email_body($msgbodyinfo, 'html');
-    echo html_writer::tag('p', get_string('body', 'local_resourcenotif'), array('class' => 'notificationlabel notificationgras'));
-    echo html_writer::tag('p', $msgbody, array('class' => 'notificationlabel'));
-    echo html_writer::tag('div', get_string('complement', 'local_resourcenotif'), array('class' => 'notificationlabel'));
-
     $mform->display();
 }
 
