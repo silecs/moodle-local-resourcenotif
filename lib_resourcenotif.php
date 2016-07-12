@@ -114,8 +114,10 @@ function resourcenotif_get_result_action_notification($infolog) {
     }
     $message = get_string('numbernotification', 'local_resourcenotif', $infolog['nb']);
     //log
+    /**
     add_to_log($infolog['courseid'], 'resourcenotif', 'send notification_course',
         $infolog['cmurl'], $message , $infolog['cmid'], $infolog['userid']);
+    **/
     return $message;
 }
 
