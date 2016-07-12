@@ -1,27 +1,44 @@
-# Purpose
+# Resource Notification, a Moodle plugin
 
-This Moodle plugin allows a teacher to notify course students by mail when a new resource/activity 
+## Purpose
+
+This Moodle plugin allows a teacher to notify course students by email when a new resource/activity 
 is created or modified into a course.
 
-The notification is activated by an action performed by the teacher, available as a new entry 
-in the *Edit* dropdown menu available for each resource or activity.
-The notification message can be customized, but contains by default two links, one to the resource
-and the other to the course.
-The message is sent to all users enrolled into the course and permitted to view the resource.
-Thus, the notification conforms to resource access restrictions as course groups.
+The notification is activated by an action performed by the teacher.
+This new action is shown in a new entry at the end of the *Edit* dropdown menu,
+available for each resource or activity, on a course page.
+
+The notification message contains two links by default,
+one to the resource, and the other to the course.
+The Moodle admin can modify this default setting.
+The teacher can change the text to send.
+
+The message is sent to all the users enrolled into the course and allowed to view the resource.
+The notification conforms to resource access restrictions such as course groups.
 
 
-# Installation trick
+## Requirements
 
-This plugin contains the main notification code and must be installed under `moodle/local/`, 
-but you need to slightly edit the core Moodle code to insert the *Notification* entry 
-in the Edit menu. The target file is `course/lib.php`.
-You can edit it by applying the patch file `course-lib.patch` with the patch command (unix) or by hand.
-In the latter case, you simply need no add the lines which are prefixed by a '+' sign.
+* Moodle 3.0 is required
+
+Moodle has changed the way it loads plugins with its 3.1 version.
+The new API was introduced in Moodle 3.0, hence the requirements.
 
 
-# Credits
+## Installation
 
-This plugin was developped by [Silecs](http://www.silecs.info) and sponsored by 
-[Université Paris 1 Panthéon-Sorbonne, France](https://www.univ-paris1.fr/),
+* Unpack or `git clone` under `local/`.
+* Install the plugin into Moodle with either by typing `php admin/cli/upgrade.php` (CLI)
+  or by visiting '/admin/index.php' (web).
+
+
+## Credits
+
+This plugin was developped by [Silecs](http://www.silecs.info)
+and initially sponsored by [Université Paris 1 Panthéon-Sorbonne, France](https://www.univ-paris1.fr/),
 as part of their main, heavily customised, [Moodle instance](https://cours.univ-paris1.fr/).
+
+Additional development and migration to Moodle 3.x was sponsored by
+[Xi’an Jiaotong-Liverpool University (XJTLU)](http://www.xjtlu.edu.cn/en/academics/aec.html).
+
