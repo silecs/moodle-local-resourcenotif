@@ -8,14 +8,19 @@
 
 $string['pluginname'] = 'Notification de ressource';
 
-$string['allstudentrecipient'] = 'Le message suivant sera transmis aux utilisateurs inscrits à ce cours ({$a}).';
+$string['allstudentrecipient'] = 'Aux étudiants inscrits à ce cours ({$a}).';
 $string['body'] = 'Corps du message : ';
 $string['complement'] = 'Complément de message : ';
-$string['grouprecipient'] = 'Le message suivant sera transmis aux utilisateurs concernés par <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest}).';
+$string['errorselectgroup'] = 'Veuillez sélectionner au moins un groupe/groupement';
+$string['errorselectrecipicent'] = 'Veuillez sélectionner un destinataire';
+$string['groupsgroupingsnone'] = 'Aucun groupe/groupement';
+$string['grouprecipient'] = 'Aux étudiants concernés par <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest}).';
 $string['nomessagesend'] = 'Aucun message envoyé.';
 $string['norecipient'] = 'Aucun destinataire';
 $string['numbernotification'] = 'Nombre de notifications envoyées : {$a}';
+$string['recipients'] = 'Destinataires';
 $string['returncourse'] = 'Retour au cours';
+$string['selectedmembers'] = 'Membres des groupes/groupements séléctionnés : ';
 $string['sender'] = 'Expéditeur : ';
 $string['sendnotification'] = 'Envoyer une notification';
 $string['subject'] = 'Sujet : ';

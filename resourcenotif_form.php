@@ -30,7 +30,7 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
 
         //recipients
         $sendok = true;
-        $mform->addElement('header', 'recipient', 'Destinataires');
+        $mform->addElement('header', 'recipient', get_string('recipients', 'local_resourcenotif'));
         $optionsSendAll = [];
         if ($customdata['nbNotifiedStudents'] == 0) {
             $optionsSendAll = ['disabled' => 'disabled'];
@@ -57,7 +57,8 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
         }
 
         if (count($selected)) {
-            $mform->addElement('radio', 'send', '', '<span class="fake-fitemtitle">ou aux membres des groupes/groupements séléctionnés : </span>', 'selection');
+            $mform->addElement('radio', 'send', '', '<span class="fake-fitemtitle">'
+                . get_string('selectedmembers', 'local_resourcenotif') . '</span>', 'selection');
             $mform->addGroup($selected, 'myselected', "", array('&nbsp;&nbsp;&nbsp;'), false);
             $mform->disabledIf('myselected', 'send', 'eq', 'selection'); //ça ne marche pas
             if ($sendok == false) {
@@ -65,7 +66,8 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
                 $sendok = true;
             }
         } else {
-            $mform->addElement('radio', 'send', '', '<span class="fake-fitemtitle">Aucun groupe/groupement</span>', 'selection', ['disabled' => 'disabled']);
+            $mform->addElement('radio', 'send', '', '<span class="fake-fitemtitle">'
+                . get_string('groupsgroupingsnone', 'local_resourcenotif') . '</span>', 'selection', ['disabled' => 'disabled']);
         }
 
         //message
@@ -114,10 +116,10 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
 
     private function validation_recipicent($data, &$errors) {
         if (isset($data['send']) == false) {
-            $errors['send'] = 'Veuillez sélectionner un destinataire';
+            $errors['send'] = get_string('errorselectrecipicent', 'local_resourcenotif');
         } else {
             if ($data['send'] == 'selection' && isset($data['groups']) == false && isset($data['groupings']) == false) {
-                 $errors['myselected'] = 'Veuillez sélectionner au moins un groupe/groupement';
+                 $errors['myselected'] = get_string('errorselectgroup', 'local_resourcenotif');
             }
         }
         return $errors;
