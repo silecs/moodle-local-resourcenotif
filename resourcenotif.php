@@ -10,11 +10,15 @@ require_once('lib_resourcenotif.php');
 require_once('resourcenotif_form.php');
 
 $id = required_param('id', PARAM_INT);
-$moduletype = required_param('mod', PARAM_ALPHA);
 
 if (! $cm = get_coursemodule_from_id($moduletype, $id)) {
     print_error('invalidcoursemodule');
 }
+
+if (! $moduletype = $DB->get_field('modules', 'name', array('id'=>$cm->module), MUST_EXIST)) {
+    print_error('invalidmodule');
+}
+
 if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
     print_error('coursemisconf');
 }
@@ -27,7 +31,7 @@ require_login($course, false, $cm);
 $modcontext = context_module::instance($cm->id);
 require_capability('moodle/course:manageactivities', $modcontext);
 
-$url = new moodle_url('/local/resourcenotif/resourcenotif.php', array('mod' => $moduletype, 'id'=>$id));
+$url = new moodle_url('/local/resourcenotif/resourcenotif.php', array('id'=>$id));
 $PAGE->set_url($url);
 
 $site = get_site();
