@@ -74,7 +74,7 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
         $mform->addElement('header', 'message', 'message');
         $msghtml = '';
         $senderlabel = html_writer::tag('span', get_string('sender', 'local_resourcenotif'), array('class' => 'notificationgras'));
-        $sender = $site->shortname . ' &#60;'. $CFG->noreplyaddress . '&#62;';
+        $sender = $customdata['siteshortname'] . ' &#60;'. $CFG->noreplyaddress . '&#62;';
         $msghtml .= html_writer::tag('p', $senderlabel . $sender, array('class' => 'notificationlabel'));
         $msghtml .= html_writer::tag('p', get_string('subject', 'local_resourcenotif') . $customdata['mailsubject'], array('class' => 'notificationlabel'));
         $msgbody = resourcenotif_get_email_body($customdata['msgbodyinfo'], 'html');

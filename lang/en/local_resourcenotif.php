@@ -28,3 +28,4 @@ $string['submit'] = 'Send';
 
 //admin setting
 $string['descriptionmsg'] = 'Available parameters : [[sender]], [[linkactivity]], [[linkcourse]]';
+$string['notification'] = 'Notification : ';

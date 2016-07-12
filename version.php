@@ -8,7 +8,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016071202;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2016071203;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2013111802.09;        // Requires this Moodle version
 $plugin->component = 'local_resourcenotif';       // Full name of the plugin (used for diagnostics)
 

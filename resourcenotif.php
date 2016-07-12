@@ -11,7 +11,7 @@ require_once('resourcenotif_form.php');
 
 $id = required_param('id', PARAM_INT);
 
-if (! $cm = get_coursemodule_from_id($moduletype, $id)) {
+if (! $cm = get_coursemodule_from_id('', $id)) {
     print_error('invalidcoursemodule');
 }
 
@@ -83,6 +83,7 @@ $infoform = ['urlactivite' => $urlactivite, 'coursepath' => $coursepath,
     'courseid' => $course->id, 'recipicents' => $recipicents, 'nbNotifiedStudents' => $nbNotifiedStudents];
 $infoform['mailsubject'] = $mailsubject;
 $infoform['msgbodyinfo'] = $msgbodyinfo;
+$infoform['siteshortname'] = $site->shortname;
 $mform = new local_resourcenotif_resourcenotif_form(null, $infoform);
 
 $newformdata = ['id'=>$id, 'mod' => $moduletype, 'courseid' => $course->id];
