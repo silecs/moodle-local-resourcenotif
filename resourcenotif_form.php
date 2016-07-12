@@ -1,11 +1,9 @@
 <?php
 /**
- * @package    local
- * @subpackage resourcenotif
- * @copyright  2012-2014 Silecs {@link http://www.silecs.info/societe}
+ * @package    local_resourcenotif
+ * @copyright  2012-2016 Silecs {@link http://www.silecs.info/societe}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-//It must be included from a Moodle page
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
