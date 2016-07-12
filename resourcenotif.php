@@ -101,7 +101,15 @@ if ($formdata) {
             $msgresult = resourcenotif_send_notification($notifiedStudents, $msg, $infolog);
         }
     } elseif ($formdata->send == 'selection') {
-        $grpNotifiedStudents = resourcenotif_get_users_recipicents($course->id, $formdata->groups, $formdata->groupings);
+        $groups = [];
+        if (isset($formdata->groups) && count($formdata->groups)) {
+           $groups =  $formdata->groups;
+        }
+        $groupings = [];
+        if (isset($formdata->groupings) && count($formdata->groupings)) {
+           $groupings =  $formdata->groupings;
+        }
+        $grpNotifiedStudents = resourcenotif_get_users_recipicents($groups, $groupings);
         if (count($grpNotifiedStudents)) {
             $msgresult = resourcenotif_send_notification($grpNotifiedStudents, $msg, $infolog);
         }

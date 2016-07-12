@@ -235,19 +235,23 @@ function resourcenotif_get_all_groupings($courseid) {
  */
 function resourcenotif_get_users_recipicents($groups, $groupings) {
     $users = [];
-    foreach ($groups as $groupid) {
-        $userg = groups_get_members($groupid);
-        foreach ($userg as $id => $u) {
-            if (isset($users[$id]) == false) {
-                $users[$id] = $u;
+    if (count($groups)) {
+        foreach ($groups as $groupid) {
+            $userg = groups_get_members($groupid);
+            foreach ($userg as $id => $u) {
+                if (isset($users[$id]) == false) {
+                    $users[$id] = $u;
+                }
             }
         }
     }
-    foreach ($groupings as $groupingid) {
-        $usergp = groups_get_grouping_members($groupingid);
-        foreach ($usergp as $id => $u) {
-            if (isset($users[$id]) == false) {
-                $users[$id] = $u;
+    if (count($groupings)) {
+        foreach ($groupings as $groupingid) {
+            $usergp = groups_get_grouping_members($groupingid);
+            foreach ($usergp as $id => $u) {
+                if (isset($users[$id]) == false) {
+                    $users[$id] = $u;
+                }
             }
         }
     }
