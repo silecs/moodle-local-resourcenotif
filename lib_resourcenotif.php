@@ -154,18 +154,20 @@ function resourcenotif_get_email_subject($siteshortname, $courseshortname, $acti
  * return string
  */
 function resourcenotif_get_email_body($msgbodyinfo, $type) {
-    $res = '';
+    $message_body = get_config('local_resourcenotif','message_body');
     $coursename = $msgbodyinfo['shortnamecourse'] . ' - ' . $msgbodyinfo['fullnamecourse'];
-    $a = new stdClass();
-    $a->sender = $msgbodyinfo['user'];
-    $a->linkactivity = $msgbodyinfo['nomactivite'];
-    $a->linkcourse = $msgbodyinfo['shortnamecourse'] . ' - ' . $msgbodyinfo['fullnamecourse'];
+    $message_body = str_replace('[[sender]]', $msgbodyinfo['user'], $message_body);
+
     if ($type == 'html') {
-        $a->linkactivity = html_writer::link($msgbodyinfo['urlactivite'], $msgbodyinfo['nomactivite']);
-        $a->linkcourse = html_writer::link($msgbodyinfo['urlcourse'], $coursename);
+        $linkactivity = html_writer::link($msgbodyinfo['urlactivite'], $msgbodyinfo['nomactivite']);
+        $linkcourse = html_writer::link($msgbodyinfo['urlcourse'], $coursename);
+    } else {
+        $linkactivity = $msgbodyinfo['nomactivite'];
+        $linkcourse = $coursename;
     }
-    $res .= get_string('msgsender', 'local_resourcenotif', $a);
-    return $res;
+    $message_body = str_replace('[[linkactivity]]', $linkactivity, $message_body);
+    $message_body = str_replace('[[linkcourse]]', $linkcourse, $message_body);
+    return $message_body;
 }
 
 /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    local
- * @subpackage up1_notificationcourse
+ * @subpackage resourcenotif
  * @copyright  2012-2014 Silecs {@link http://www.silecs.info/societe}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,6 +26,5 @@ $string['sendnotification'] = 'Envoyer une notification';
 $string['subject'] = 'Sujet : ';
 $string['submit'] = 'Envoyer';
 
-// The following strings are part of the sent message
-$string['notification'] = 'Notification : ';
-$string['msgsender'] = '{$a->sender} souhaite attirer votre attention sur l\'élément {$a->linkactivity} proposé au sein du cours {$a->linkcourse}.';
+//admin setting
+$string['descriptionmsg'] = 'Paramètres disponibles : [[sender]], [[linkactivity]], [[linkcourse]]';
