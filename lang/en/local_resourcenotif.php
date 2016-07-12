@@ -8,24 +8,24 @@
 
 $string['pluginname'] = 'Resource notification';
 
-$string['allstudentrecipient'] = 'Users enrolled to this course ({$a}).';
+$string['allstudentrecipient'] = 'Users enrolled in this course ({$a}).';
 $string['body'] = 'Message body: ';
-$string['complement'] = 'Message complement: ';
+$string['complement'] = 'Append to the message: ';
 $string['errorselectgroup'] = 'You must select at least one group/grouping';
 $string['errorselectrecipicent'] = 'Please select a recipicent';
 $string['groupsgroupingsnone'] = 'No groups/groupings';
-$string['grouprecipient'] = 'Users permitted to view <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest}).';
+$string['grouprecipient'] = 'Users permitted to view <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest})';
 $string['nomessagesend'] = 'No sent message.';
 $string['norecipient'] = 'No recipient.';
 $string['numbernotification'] = 'Number of notifications sent: {$a}';
 $string['recipients'] = 'Recipients';
 $string['returncourse'] = 'Return to course';
-$string['selectedmembers'] = 'Members of selected groups/groupings : ';
+$string['selectedmembers'] = 'Members of selected groups/groupings: ';
 $string['sender'] = 'Sender: ';
 $string['sendnotification'] = 'Send a notification';
 $string['subject'] = 'Object: ';
 $string['submit'] = 'Send';
 
 //admin setting
-$string['descriptionmsg'] = 'Available parameters : [[sender]], [[linkactivity]], [[linkcourse]]';
-$string['notification'] = 'Notification : ';
+$string['descriptionmsg'] = 'Available parameters: [[sender]], [[linkactivity]], [[linkcourse]]';
+$string['notification'] = 'Notification: ';

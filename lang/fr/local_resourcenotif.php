@@ -14,7 +14,7 @@ $string['complement'] = 'Complément de message : ';
 $string['errorselectgroup'] = 'Veuillez sélectionner au moins un groupe/groupement';
 $string['errorselectrecipicent'] = 'Veuillez sélectionner un destinataire';
 $string['groupsgroupingsnone'] = 'Aucun groupe/groupement';
-$string['grouprecipient'] = 'Aux étudiants concernés par <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest}).';
+$string['grouprecipient'] = 'Aux étudiants concernés par <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest})';
 $string['nomessagesend'] = 'Aucun message envoyé.';
 $string['norecipient'] = 'Aucun destinataire';
 $string['numbernotification'] = 'Nombre de notifications envoyées : {$a}';
