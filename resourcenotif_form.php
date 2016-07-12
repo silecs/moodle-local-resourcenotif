@@ -60,7 +60,7 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
             $mform->addElement('radio', 'send', '', '<span class="fake-fitemtitle">'
                 . get_string('selectedmembers', 'local_resourcenotif') . '</span>', 'selection');
             $mform->addGroup($selected, 'myselected', "", array('&nbsp;&nbsp;&nbsp;'), false);
-            $mform->disabledIf('myselected', 'send', 'eq', 'selection'); //ça ne marche pas
+            $mform->disabledIf('myselected', 'send', 'neq', 'selection'); //ça ne marche pas
             if ($sendok == false) {
                 $mform->setDefault('send', 'selection');
                 $sendok = true;
