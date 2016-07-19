@@ -13,9 +13,9 @@ require_once($CFG->libdir.'/formslib.php');
 
 class local_resourcenotif_resourcenotif_form extends moodleform {
     public function definition() {
-        global $CFG, $USER;
+        global $CFG;
 
-        $mform =& $this->_form;
+        $mform = $this->_form;
         $customdata = $this->_customdata;
 
         // hidden elements
@@ -55,8 +55,13 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
         }
 
         if (count($selected)) {
-            $mform->addElement('radio', 'send', '', '<span class="fake-fitemtitle">'
-                . get_string('selectedmembers', 'local_resourcenotif') . '</span>', 'selection');
+            $mform->addElement(
+                'radio',
+                'send',
+                '',
+                '<span class="fake-fitemtitle">' . get_string('selectedmembers', 'local_resourcenotif') . '</span>',
+                'selection'
+            );
             $mform->addGroup($selected, 'myselected', "", array('&nbsp;&nbsp;&nbsp;'), false);
             $mform->disabledIf('myselected', 'send', 'neq', 'selection'); //ça ne marche pas
             if ($sendok == false) {
@@ -82,8 +87,7 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
 
         $mform->addElement('html', $msghtml);
 
-        $mform->addElement('textarea', 'complement', null, array('rows' => 3,
-            'cols' => 80));
+        $mform->addElement('textarea', 'complement', null, ['rows' => 3, 'cols' => 80]);
         $mform->setType('complement',PARAM_RAW);
 
         $urlactivity = html_writer::link($this->_customdata['urlactivite'], $this->_customdata['urlactivite']);
