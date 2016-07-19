@@ -64,6 +64,7 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
             );
             $mform->addGroup($selected, 'myselected', "", array('&nbsp;&nbsp;&nbsp;'), false);
             $mform->disabledIf('groups[]', 'send', 'neq', 'selection');
+            $mform->disabledIf('groupings[]', 'send', 'neq', 'selection');
             if ($sendok == false) {
                 $mform->setDefault('send', 'selection');
                 $sendok = true;
