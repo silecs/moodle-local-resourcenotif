@@ -11,7 +11,7 @@
  * @return object $message
  */
 function resourcenotif_get_notification_message($subject, $msgbodyinfo, $complement) {
-    $message = new object();
+    $message = new stdClass();
     $message->subject = $subject;
     $message->from = $msgbodyinfo['shortnamesite'];
     $comhtml = '';
