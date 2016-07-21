@@ -89,17 +89,6 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
         $mform->addElement('textarea', 'complement', null, ['rows' => 3, 'cols' => 80]);
         $mform->setType('complement',PARAM_RAW);
 
-        $urlactivity = html_writer::link($this->_customdata['urlactivite'], $this->_customdata['urlactivite']);
-
-        $htmlinfo = html_writer::empty_tag('br');
-        $htmlinfo .= html_writer::tag(
-            'p',
-            $this->_customdata['coursepath'] .  html_writer::empty_tag('br') . $urlactivity,
-            array('class' => 'notificationlabel')
-        );
-
-        $mform->addElement('html', $htmlinfo);
-
         //-------------------------------------------------------------------------------
         // buttons
         if ($sendok) {

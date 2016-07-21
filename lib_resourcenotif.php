@@ -23,9 +23,6 @@ function resourcenotif_get_notification_message($subject, $msgbodyinfo, $complem
     $message->bodyhtml = '<p>' . resourcenotif_get_email_body($msgbodyinfo, 'html') . '</p>' . $comhtml;
     $message->bodytext = resourcenotif_get_email_body($msgbodyinfo, 'text') . $comtext;
 
-    $message->bodyhtml .= '<p>' . $msgbodyinfo['coursepath']
-        . '<br/><a href="' . $msgbodyinfo['urlactivite']
-        . '">' . $msgbodyinfo['urlactivite'] . '</a></p>';
     $message->bodytext .= "\n\n" . $msgbodyinfo['coursepath']
         . "\n" . $msgbodyinfo['urlactivite'];
     return $message;
