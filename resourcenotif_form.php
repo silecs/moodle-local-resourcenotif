@@ -86,7 +86,7 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
 
         $mform->addElement('html', $msghtml);
 
-        $mform->addElement('textarea', 'complement', null, ['rows' => 3, 'cols' => 80]);
+        $mform->addElement('textarea', 'complement', null, ['rows' => 5, 'cols' => 60]);
         $mform->setType('complement',PARAM_RAW);
 
         //-------------------------------------------------------------------------------
