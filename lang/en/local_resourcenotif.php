@@ -10,7 +10,7 @@ $string['pluginname'] = 'Resource notification';
 
 $string['allstudentrecipient'] = 'Users enrolled in this course ({$a}).';
 $string['body'] = 'Message body: ';
-$string['complement'] = 'Append to the message: ';
+$string['complement'] = 'Additional comments (optional): ';
 $string['content'] = 'Content';
 $string['errorselectgroup'] = 'You must select at least one group/grouping';
 $string['errorselectrecipicent'] = 'Please select a recipicent';
