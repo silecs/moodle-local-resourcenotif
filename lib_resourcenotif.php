@@ -154,7 +154,7 @@ function resourcenotif_get_email_subject($siteshortname, $courseshortname, $acti
  */
 function resourcenotif_get_email_body($msgbodyinfo, $type) {
     $message_body = get_config('local_resourcenotif','message_body');
-    $coursename = $msgbodyinfo['shortnamecourse'] . ' - ' . $msgbodyinfo['fullnamecourse'];
+    $coursename = $msgbodyinfo['fullnamecourse'];
     $message_body = str_replace('[[sender]]', $msgbodyinfo['user'], $message_body);
 
     if ($type == 'html') {
