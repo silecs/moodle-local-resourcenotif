@@ -24,7 +24,7 @@ $string['returncourse'] = 'Return to course';
 $string['selectedmembers'] = 'Members of selected groups/groupings: ';
 $string['sender'] = 'Sender: ';
 $string['sendnotification'] = 'Send a notification';
-$string['subject'] = 'Object: ';
+$string['subject'] = 'Subject: ';
 $string['submit'] = 'Send';
 
 //admin setting
