@@ -45,6 +45,7 @@ $infolog['userid'] = $USER->id;
 
 $urlcourse = $CFG->wwwroot . '/course/view.php?id='.$course->id;
 $urlactivite = $CFG->wwwroot . '/mod/' . $moduletype . '/view.php?id=' . $cm->id;
+$urleditactivite = $CFG->wwwroot . '/course/modedit.php?update=' . $cm->id;
 
 $coursepath = resourcenotif_get_pathcategories_course($PAGE->categories, $course);
 
@@ -55,6 +56,7 @@ $msgbodyinfo['user'] = $USER->firstname . ' ' . $USER->lastname;
 $msgbodyinfo['shortnamesite'] = $site->shortname;
 $msgbodyinfo['nomactivite'] = format_string($cm->name);
 $msgbodyinfo['urlactivite'] = $urlactivite;
+$msgbodyinfo['editactivite'] = $urleditactivite;
 $msgbodyinfo['urlcourse'] = $urlcourse;
 $msgbodyinfo['shortnamecourse'] = $course->shortname;
 $msgbodyinfo['fullnamecourse'] = $course->fullname;

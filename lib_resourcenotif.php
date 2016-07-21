@@ -48,6 +48,7 @@ function resourcenotif_get_recipient_label($nbdest, $availability, $msgbodyinfo)
         $a->nbdest = $nbdest;
         $a->linkactivity = $msgbodyinfo['urlactivite'];
         $a->nameactivity = $msgbodyinfo['nomactivite'];
+        $a->editactivity = $msgbodyinfo['editactivite'];
         return get_string('grouprecipient', 'local_resourcenotif', $a);
     } else {
         return get_string('allstudentrecipient', 'local_resourcenotif', $nbdest);

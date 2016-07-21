@@ -8,14 +8,14 @@
 
 $string['pluginname'] = 'Resource notification';
 
-$string['allstudentrecipient'] = 'Users enrolled in this course ({$a}).';
+$string['allstudentrecipient'] = 'Students enrolled in this course ({$a}).';
 $string['body'] = 'Message body: ';
 $string['complement'] = 'Additional comments (optional): ';
 $string['content'] = 'Content';
 $string['errorselectgroup'] = 'You must select at least one group/grouping';
 $string['errorselectrecipicent'] = 'Please select a recipicent';
 $string['groupsgroupingsnone'] = 'No groups/groupings';
-$string['grouprecipient'] = 'Users permitted to view <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest})';
+$string['grouprecipient'] = 'Participants permitted to view <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest} users - Restrict access conditions have been applied to this activity/resource; <a href="{$a->editactivity}">view details</a>)';
 $string['nomessagesend'] = 'No sent message.';
 $string['norecipient'] = 'No recipient.';
 $string['numbernotification'] = 'Number of notifications sent: {$a}';
