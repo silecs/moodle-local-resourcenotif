@@ -11,6 +11,7 @@ $string['pluginname'] = 'Notification de ressource';
 $string['allstudentrecipient'] = 'Aux étudiants inscrits à ce cours ({$a}).';
 $string['body'] = 'Corps du message : ';
 $string['complement'] = 'Complément de message : ';
+$string['content'] = 'Message';
 $string['errorselectgroup'] = 'Veuillez sélectionner au moins un groupe/groupement';
 $string['errorselectrecipicent'] = 'Veuillez sélectionner un destinataire';
 $string['groupsgroupingsnone'] = 'Aucun groupe/groupement';

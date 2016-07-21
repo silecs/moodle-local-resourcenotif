@@ -75,7 +75,7 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
         }
 
         //message
-        $mform->addElement('header', 'message', 'message');
+        $mform->addElement('header', 'message', get_string('content', 'local_resourcenotif'));
         $msghtml = '';
         $senderlabel = html_writer::tag('span', get_string('sender', 'local_resourcenotif'), array('class' => 'notificationgras'));
         $sender = $customdata['siteshortname'] . ' &#60;'. $CFG->noreplyaddress . '&#62;';
