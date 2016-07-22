@@ -74,6 +74,15 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
                 . get_string('groupsgroupingsnone', 'local_resourcenotif') . '</span>', 'selection', ['disabled' => 'disabled']);
         }
 
+        $liststudents = resourcenotif_get_list_students($customdata['courseid']);
+        if (count($liststudents)) {
+            $mform->addElement('radio', 'send', '', '<span class="fake-fitemtitle">' .
+                get_string('selectstudents', 'local_resourcenotif') . '</span>', 'selectionstudents', $optionsSendAll);
+
+            $mform->addElement('select', 'students', '', $liststudents)->setMultiple(true);
+            $mform->disabledIf('students', 'send', 'neq', 'selectionstudents');
+        }
+
         //message
         $mform->addElement('header', 'message', get_string('content', 'local_resourcenotif'));
         $msghtml = '';
@@ -110,6 +119,9 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
         } else {
             if ($data['send'] == 'selection' && isset($data['groups']) == false && isset($data['groupings']) == false) {
                  $errors['myselected'] = get_string('errorselectgroup', 'local_resourcenotif');
+            }
+            if ($data['send'] == 'selectionstudents' && isset($data['students']) == false) {
+                 $errors['students'] = get_string('errorselectstudent', 'local_resourcenotif');
             }
         }
         return $errors;

@@ -55,13 +55,13 @@ function resourcenotif_get_recipient_label($nbdest, $availability, $msgbodyinfo)
 /**
  * renvoie les utilisateurs ayant le rôle 'rolename'
  * dans le cours $course
- * @param object $course $course
+ * @param int $courseid
  * @param string $rolename shortname du rôle
  * @return array de $user
  */
-function resourcenotif_get_users_from_course($course, $rolename) {
+function resourcenotif_get_users_from_course($courseid, $rolename) {
     global $DB;
-    $coursecontext = context_course::instance($course->id);
+    $coursecontext = context_course::instance($courseid);
     $rolestudent = $DB->get_record('role', array('shortname'=> $rolename));
     $studentcontext = get_users_from_role_on_context($rolestudent, $coursecontext);
 
@@ -253,4 +253,20 @@ function resourcenotif_get_users_recipicents($groups, $groupings) {
         }
     }
     return $users;
+}
+
+/**
+ * Renvoie le tableau des étudiants inscrit à un cours
+ * @param int $courseid
+ * @return $array $ listStudent id=>studentname
+ **/
+function resourcenotif_get_list_students($courseid) {
+    $listStudent = [];
+    $students = resourcenotif_get_users_from_course($courseid, 'student');
+    if (isset($students) && count($students)) {
+        foreach ($students as $id => $student) {
+            $listStudent[$id] = $student->firstname . ' ' . $student->lastname;
+        }
+    }
+    return $listStudent;
 }

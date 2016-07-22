@@ -67,7 +67,7 @@ $PAGE->set_title(format_string($module->name));
 $PAGE->requires->css(new moodle_url('/local/resourcenotif/resourcenotif.css'));
 
 $recipicents = '';
-$students = resourcenotif_get_users_from_course($course, 'student');
+$students = resourcenotif_get_users_from_course($course->id, 'student');
 $notifiedStudents = [];
 
 $modinfo = get_fast_modinfo($course)->get_cm($cm->id);
@@ -114,6 +114,15 @@ if ($formdata) {
         $grpNotifiedStudents = resourcenotif_get_users_recipicents($groups, $groupings);
         if (count($grpNotifiedStudents)) {
             $msgresult = resourcenotif_send_notification($grpNotifiedStudents, $msg, $infolog);
+        }
+    } elseif ($formdata->send == 'selectionstudents') {
+        $listidstudents = $formdata->students;
+        if (count($listidstudents)) {
+            $notifiedS = [];
+            foreach ($listidstudents as $id) {
+                $notifiedS[$id] = $students[$id];
+            }
+            $msgresult = resourcenotif_send_notification($notifiedS, $msg, $infolog);
         }
     }
 }
