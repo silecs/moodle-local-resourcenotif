@@ -36,9 +36,8 @@ The new API was introduced in Moodle 3.0, hence the requirements.
 ## Credits
 
 This plugin was developped by [Silecs](http://www.silecs.info)
-and initially sponsored by [Université Paris 1 Panthéon-Sorbonne, France](https://www.univ-paris1.fr/),
-as part of their main, heavily customised, [Moodle instance](https://cours.univ-paris1.fr/).
+and initially sponsored by [Université Paris 1 Panthéon-Sorbonne, France](https://www.univ-paris1.fr/).
 
-Additional enhancements and migration to Moodle 3.x was sponsored by
+Additional enhancements and migration to Moodle 3.x were sponsored by
 [Xi’an Jiaotong-Liverpool University (XJTLU)](http://www.xjtlu.edu.cn/en/academics/aec.html), China.
 
