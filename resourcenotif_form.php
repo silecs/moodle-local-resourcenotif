@@ -91,11 +91,13 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
         $msgbody = resourcenotif_get_email_body($customdata['msgbodyinfo'], 'html');
         $msghtml .= html_writer::tag('p', get_string('body', 'local_resourcenotif'), array('class' => 'notificationlabel notificationgras'));
         $msghtml .= html_writer::tag('p', $msgbody, array('class' => 'notificationlabel'));
-        $msghtml .= html_writer::tag('div', get_string('complement', 'local_resourcenotif'), array('class' => 'notificationlabel'));
 
         $mform->addElement('html', $msghtml);
+        $mform->setExpanded('message');
 
-        $mform->addElement('textarea', 'complement', null, ['rows' => 5, 'cols' => 60]);
+        $mform->addElement('header', 'complementheader', get_string('complement', 'local_resourcenotif') );
+        $mform->setExpanded('complementheader');
+        $mform->addElement('textarea', 'complement', null, ['rows' => 5, 'class' => 'complement']);
         $mform->setType('complement',PARAM_RAW);
 
         //-------------------------------------------------------------------------------

@@ -16,3 +16,12 @@
 #id_submitbutton {
     font-weight: 700;
 }
+#fitem_id_complement div.fitemtitle {
+    width: 0px;
+}
+#fitem_id_complement div.felement {
+    margin: 0px;
+}
+.complement {
+    width: 100%;
+}
