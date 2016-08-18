@@ -7,7 +7,10 @@
 
 /**
  * construit l'objet $message contenant le sujet et le corps de message version texte et html
+ *
  * @param string $subject
+ * @param mixed $msgbodyinfo
+ * @param string $complement
  * @return object $message
  */
 function resourcenotif_get_notification_message($subject, $msgbodyinfo, $complement) {
@@ -16,11 +19,12 @@ function resourcenotif_get_notification_message($subject, $msgbodyinfo, $complem
     $message->from = $msgbodyinfo['shortnamesite'];
     $comhtml = '';
     $comtext = '';
-    if (trim($complement) !='') {
+    if (trim($complement)) {
         $comhtml .= '<p>' . $complement . '</p>';
         $comtext .= "\n\n" . $complement;
     }
-    $message->bodyhtml = '<p>' . resourcenotif_get_email_body($msgbodyinfo, 'html') . '</p>' . $comhtml;
+    $message->bodyhtml = '<p>' . resourcenotif_get_email_body($msgbodyinfo, 'html') . '</p>'
+        . $comhtml;
     $message->bodytext = resourcenotif_get_email_body($msgbodyinfo, 'text') . $comtext;
 
     $message->bodytext .= "\n\n" . $msgbodyinfo['coursepath']
@@ -31,6 +35,7 @@ function resourcenotif_get_notification_message($subject, $msgbodyinfo, $complem
 /**
  * construit le messsage d'interface du nombre et de la qualité des
  * destinataires du message
+ *
  * @param int $nbdest
  * @param string $availability
  * @param array $msgbodyinfo
@@ -54,10 +59,11 @@ function resourcenotif_get_recipient_label($nbdest, $availability, $msgbodyinfo)
 
 /**
  * renvoie les utilisateurs ayant le rôle 'rolename'
- * dans le cours $course
+ * dans le cours $courseid
+ *
  * @param int $courseid
  * @param string $rolename shortname du rôle
- * @return array de $user
+ * @return array [users...]
  */
 function resourcenotif_get_users_from_course($courseid, $rolename) {
     global $DB;
@@ -68,12 +74,11 @@ function resourcenotif_get_users_from_course($courseid, $rolename) {
     if (count($studentcontext) == 0) {
         return $studentcontext;
     }
-    $ids = '';
+    $ids = [];
     foreach ($studentcontext as $sc) {
-        $ids .= $sc->userid . ',';
+        $ids[] = (int) $sc->userid;
     }
-    $ids = substr($ids, 0, -1);
-    $sql = "SELECT * FROM {user} WHERE id IN ({$ids})";
+    $sql = "SELECT * FROM {user} WHERE id IN (" . join(",", $ids) . ")";
     $students = $DB->get_records_sql($sql);
 
     return $students;
@@ -81,10 +86,11 @@ function resourcenotif_get_users_from_course($courseid, $rolename) {
 
 /**
  * Envoi une notification aux $users + copie à $USER
+ *
  * @param array $idusers
  * @param object $msg
  * @param array $infolog informations pour le log pour les envois de mails
- * @return string : message interface
+ * @return string message interface
  */
 function resourcenotif_send_notification($users, $msg, $infolog) {
     global $USER;
@@ -102,6 +108,7 @@ function resourcenotif_send_notification($users, $msg, $infolog) {
 
 /**
  * construit le message d'interface après l'envoi groupé de notification
+ *
  * @param array $infolog informations pour le log pour les envois de mails
  * @return string message interface
  */
@@ -110,19 +117,15 @@ function resourcenotif_get_result_action_notification($infolog) {
         return get_string('nomessagesend', 'local_resourcenotif');
     }
     $message = get_string('numbernotification', 'local_resourcenotif', $infolog['nb']);
-    //log
-    /**
-    add_to_log($infolog['courseid'], 'resourcenotif', 'send notification_course',
-        $infolog['cmurl'], $message , $infolog['cmid'], $infolog['userid']);
-    **/
     return $message;
 }
 
 /**
  * Envoie un email à l'adresse mail spécifiée
+ *
  * @param string $email
  * @param object $msg
- * @return false ou resultat de la fonction email_to_user()
+ * @return mixed false ou resultat de la fonction email_to_user()
  **/
 function resourcenotif_send_email($user, $msg) {
     global $USER;
@@ -136,17 +139,16 @@ function resourcenotif_send_email($user, $msg) {
     $eventdata->userfrom = $USER;
     $eventdata->userto = $user;
     $eventdata->subject = $msg->subject;
-    $eventdata->fullmessageformat = FORMAT_PLAIN;   // text format
+    $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessage = $msg->bodytext;
-    $eventdata->fullmessagehtml = $msg->bodyhtml;   //$messagehtml;
-    $eventdata->smallmessage = $msg->bodytext; // USED BY DEFAULT !
+    $eventdata->fullmessagehtml = $msg->bodyhtml;
+    $eventdata->smallmessage = $msg->bodytext;
     return message_send($eventdata);
-    //$emailform = $msg->from;
-    //return email_to_user($user, $emailform, $msg->subject, $msg->bodytext, $msg->bodyhtml);
 }
 
 /**
  * construit le sujet du mail envoyé
+ *
  * @param string $siteshortname
  * @param string $courseshortname
  * @param string $activitename
@@ -160,7 +162,6 @@ function resourcenotif_get_email_subject($siteshortname, $courseshortname, $acti
 }
 
 /**
- * construit le
  * @param array $msgbodyinfo
  * @param string $type
  * return string
@@ -184,9 +185,10 @@ function resourcenotif_get_email_body($msgbodyinfo, $type) {
 
 /**
  * Construit le chemin categories > cours
+ *
  * @param array $categories tableau de tableaux
  * @param object $course
- * @return string $path
+ * @return string path
  */
 function resourcenotif_get_pathcategories_course($categories, $course) {
     $path ='';
@@ -206,6 +208,7 @@ function resourcenotif_get_pathcategories_course($categories, $course) {
 
 /**
  * Renvoie tous les groupes d'un cours
+ *
  * @param int $courseid
  * @return array groups
  */
@@ -222,6 +225,7 @@ function resourcenotif_get_all_groups($courseid) {
 
 /**
  * Retourne tous les groupements d'un cours
+ *
  * @param int $courseid
  * @return array $groupings
  */
@@ -239,9 +243,10 @@ function resourcenotif_get_all_groupings($courseid) {
 /**
  * Renvoie le tableau des utilisateurs appartenant aux groupes $groups
  * ou aux groupements $groupings
+ *
  * @param array $groups
  * @param array $groupings
- * @return array $users
+ * @return array users
  */
 function resourcenotif_get_users_recipicents($groups, $groupings) {
     $users = [];
@@ -249,7 +254,7 @@ function resourcenotif_get_users_recipicents($groups, $groupings) {
         foreach ($groups as $groupid) {
             $userg = groups_get_members($groupid);
             foreach ($userg as $id => $u) {
-                if (isset($users[$id]) == false) {
+                if (!isset($users[$id])) {
                     $users[$id] = $u;
                 }
             }
@@ -259,7 +264,7 @@ function resourcenotif_get_users_recipicents($groups, $groupings) {
         foreach ($groupings as $groupingid) {
             $usergp = groups_get_grouping_members($groupingid);
             foreach ($usergp as $id => $u) {
-                if (isset($users[$id]) == false) {
+                if (!isset($users[$id])) {
                     $users[$id] = $u;
                 }
             }
@@ -270,13 +275,16 @@ function resourcenotif_get_users_recipicents($groups, $groupings) {
 
 /**
  * Renvoie le tableau des étudiants inscrit à un cours
+ *
+ * @todo Should use `fullname()` instead of hardcoded format.
+ *
  * @param int $courseid
- * @return $array $ listStudent id=>studentname
+ * @return array [id => studentname]
  **/
 function resourcenotif_get_list_students($courseid) {
     $listStudent = [];
     $students = resourcenotif_get_users_from_course($courseid, 'student');
-    if (isset($students) && count($students)) {
+    if (!empty($students)) {
         foreach ($students as $id => $student) {
             $listStudent[$id] = $student->firstname . ' ' . $student->lastname;
         }

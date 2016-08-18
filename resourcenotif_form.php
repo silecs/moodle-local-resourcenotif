@@ -85,12 +85,11 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
 
         //message
         $mform->addElement('header', 'message', get_string('content', 'local_resourcenotif'));
-        $msghtml = '';
         $subjectlabel = html_writer::tag('span', get_string('subject', 'local_resourcenotif'), array('class' => 'notificationgras'));
-        $msghtml .= html_writer::tag('p', $subjectlabel . $customdata['mailsubject'], array('class' => 'notificationlabel'));
         $msgbody = resourcenotif_get_email_body($customdata['msgbodyinfo'], 'html');
-        $msghtml .= html_writer::tag('p', get_string('body', 'local_resourcenotif'), array('class' => 'notificationlabel notificationgras'));
-        $msghtml .= html_writer::tag('p', $msgbody, array('class' => 'notificationlabel'));
+        $msghtml = html_writer::tag('p', $subjectlabel . $customdata['mailsubject'], array('class' => 'notificationlabel'))
+            . html_writer::tag('p', get_string('body', 'local_resourcenotif'), array('class' => 'notificationlabel notificationgras'))
+            . html_writer::tag('p', $msgbody, array('class' => 'notificationlabel'));
 
         $mform->addElement('html', $msghtml);
         $mform->setExpanded('message');
@@ -116,15 +115,15 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
     }
 
     private function validation_recipicent($data, &$errors) {
-        if (isset($data['send']) == false) {
-            $errors['send'] = get_string('errorselectrecipicent', 'local_resourcenotif');
-        } else {
-            if ($data['send'] == 'selection' && isset($data['groups']) == false && isset($data['groupings']) == false) {
+        if (isset($data['send'])) {
+            if ($data['send'] == 'selection' && !isset($data['groups']) && !isset($data['groupings'])) {
                  $errors['myselected'] = get_string('errorselectgroup', 'local_resourcenotif');
             }
-            if ($data['send'] == 'selectionstudents' && isset($data['students']) == false) {
+            if ($data['send'] == 'selectionstudents' && !isset($data['students'])) {
                  $errors['students'] = get_string('errorselectstudent', 'local_resourcenotif');
             }
+        } else {
+            $errors['send'] = get_string('errorselectrecipicent', 'local_resourcenotif');
         }
         return $errors;
     }
