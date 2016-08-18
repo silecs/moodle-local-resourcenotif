@@ -32,3 +32,6 @@ $string['submit'] = 'Envoyer';
 //admin setting
 $string['descriptionmsg'] = 'Paramètres disponibles : [[sender]], [[linkactivity]], [[linkcourse]]';
 $string['notification'] = 'Notification : ';
+
+//Default message outputs
+$string['messageprovider:resourcenotif_notification'] = 'Activité/ressource notifications';

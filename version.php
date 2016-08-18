@@ -7,7 +7,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016081600;
+$plugin->version   = 2016081800;
 $plugin->requires  = 2015111600; // 3.0
 $plugin->component = 'local_resourcenotif';
 

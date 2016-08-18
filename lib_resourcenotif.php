@@ -125,11 +125,24 @@ function resourcenotif_get_result_action_notification($infolog) {
  * @return false ou resultat de la fonction email_to_user()
  **/
 function resourcenotif_send_email($user, $msg) {
+    global $USER;
+
     if (!isset($user->email) && empty($user->email)) {
         return false;
     }
-    $emailform = $msg->from;
-    return email_to_user($user, $emailform, $msg->subject, $msg->bodytext, $msg->bodyhtml);
+    $eventdata = new \core\message\message();
+    $eventdata->component = 'local_resourcenotif';
+    $eventdata->name = 'resourcenotif_notification';
+    $eventdata->userfrom = $USER;
+    $eventdata->userto = $user;
+    $eventdata->subject = $msg->subject;
+    $eventdata->fullmessageformat = FORMAT_PLAIN;   // text format
+    $eventdata->fullmessage = $msg->bodytext;
+    $eventdata->fullmessagehtml = $msg->bodyhtml;   //$messagehtml;
+    $eventdata->smallmessage = $msg->bodytext; // USED BY DEFAULT !
+    return message_send($eventdata);
+    //$emailform = $msg->from;
+    //return email_to_user($user, $emailform, $msg->subject, $msg->bodytext, $msg->bodyhtml);
 }
 
 /**
