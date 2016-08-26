@@ -148,14 +148,12 @@ function resourcenotif_send_email($user, $msg) {
 /**
  * construit le sujet du mail envoyé
  *
- * @param string $siteshortname
  * @param string $courseshortname
  * @param string $activitename
  * @return string
  */
-function resourcenotif_get_email_subject($siteshortname, $courseshortname, $activitename) {
-    $subject = '';
-    $subject .='['. $siteshortname . '] '. get_string('notification', 'local_resourcenotif')
+function resourcenotif_get_email_subject($courseshortname, $activitename) {
+    $subject = get_string('notification', 'local_resourcenotif')
         . $courseshortname . ' - ' . $activitename;
     return $subject;
 }

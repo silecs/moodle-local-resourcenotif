@@ -49,7 +49,7 @@ $urleditactivite = $CFG->wwwroot . '/course/modedit.php?update=' . $cm->id;
 
 $coursepath = resourcenotif_get_pathcategories_course($PAGE->categories, $course);
 
-$mailsubject = resourcenotif_get_email_subject($site->shortname, $course->shortname, format_string($cm->name));
+$mailsubject = resourcenotif_get_email_subject($course->shortname, format_string($cm->name));
 
 $msgbodyinfo = array();
 $msgbodyinfo['user'] = $USER->firstname . ' ' . $USER->lastname;
