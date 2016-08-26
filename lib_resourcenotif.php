@@ -20,15 +20,14 @@ function resourcenotif_get_notification_message($subject, $msgbodyinfo, $complem
     $comhtml = '';
     $comtext = '';
     if (trim($complement)) {
-        $comhtml .= '<p>' . $complement . '</p>';
+        $comhtml .= format_text($complement, FORMAT_MOODLE);
         $comtext .= "\n\n" . $complement;
     }
     $message->bodyhtml = '<p>' . resourcenotif_get_email_body($msgbodyinfo, 'html') . '</p>'
         . $comhtml;
-    $message->bodytext = resourcenotif_get_email_body($msgbodyinfo, 'text') . $comtext;
-
-    $message->bodytext .= "\n\n" . $msgbodyinfo['coursepath']
-        . "\n" . $msgbodyinfo['urlactivite'];
+    $message->bodytext = resourcenotif_get_email_body($msgbodyinfo, 'text')
+        . $comtext
+        . "\n\n" . $msgbodyinfo['coursepath'] . "\n" . $msgbodyinfo['urlactivite'];
     return $message;
 }
 
@@ -139,10 +138,10 @@ function resourcenotif_send_email($user, $msg) {
     $eventdata->userfrom = $USER;
     $eventdata->userto = $user;
     $eventdata->subject = $msg->subject;
-    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessageformat = FORMAT_MOODLE;
     $eventdata->fullmessage = $msg->bodytext;
     $eventdata->fullmessagehtml = $msg->bodyhtml;
-    $eventdata->smallmessage = $msg->bodytext;
+    $eventdata->smallmessage = $msg->bodyhtml;
     return message_send($eventdata);
 }
 
