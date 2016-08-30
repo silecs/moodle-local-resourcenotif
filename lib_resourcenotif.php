@@ -138,10 +138,11 @@ function resourcenotif_send_email($user, $msg) {
     $eventdata->userfrom = $USER;
     $eventdata->userto = $user;
     $eventdata->subject = $msg->subject;
-    $eventdata->fullmessageformat = FORMAT_MOODLE;
+    // With FORMAT_HTML, fullmessage is always ignored, even for a plain text output
+    $eventdata->fullmessageformat = FORMAT_HTML;
     $eventdata->fullmessage = $msg->bodytext;
     $eventdata->fullmessagehtml = $msg->bodyhtml;
-    $eventdata->smallmessage = $msg->bodyhtml;
+    $eventdata->smallmessage = ""; // If filled, will have priority, with hard coded FORMAT_PLAIN
     return message_send($eventdata);
 }
 
