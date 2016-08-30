@@ -138,11 +138,15 @@ function resourcenotif_send_email($user, $msg) {
     $eventdata->userfrom = $USER;
     $eventdata->userto = $user;
     $eventdata->subject = $msg->subject;
-    // With FORMAT_HTML, fullmessage is always ignored, even for a plain text output
-    $eventdata->fullmessageformat = FORMAT_HTML;
     $eventdata->fullmessage = $msg->bodytext;
     $eventdata->fullmessagehtml = $msg->bodyhtml;
-    $eventdata->smallmessage = ""; // If filled, will have priority, with hard coded FORMAT_PLAIN
+    // With FORMAT_HTML, most outputs will use fullmessagehtml, and convert it to plain text if necessary.
+    // but some output plugins will behave differently (airnotifier only uses fullmessage)
+    $eventdata->fullmessageformat = FORMAT_HTML;
+    // If smallmessage is not empty,
+    // it will have priority over the 2 other fields, with a hard coded FORMAT_PLAIN.
+    // But some output plugins may need it, as jabber currently does.
+    $eventdata->smallmessage = "";
     return message_send($eventdata);
 }
 
