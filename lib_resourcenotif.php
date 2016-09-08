@@ -27,7 +27,8 @@ function resourcenotif_get_notification_message($subject, $msgbodyinfo, $complem
         . $comhtml;
     $message->bodytext = resourcenotif_get_email_body($msgbodyinfo, 'text')
         . $comtext
-        . "\n\n" . $msgbodyinfo['coursepath'] . "\n" . $msgbodyinfo['urlcourse'];
+        . "\n\n" . $msgbodyinfo['coursepath']
+        . "\n" . $msgbodyinfo['nomactivite'] . "\n" . $msgbodyinfo['urlactivite'];
     return $message;
 }
 
@@ -177,7 +178,7 @@ function resourcenotif_get_email_body($msgbodyinfo, $type) {
         $linkactivity = html_writer::link($msgbodyinfo['urlactivite'], $msgbodyinfo['nomactivite']);
         $linkcourse = html_writer::link($msgbodyinfo['urlcourse'], $coursename);
     } else {
-        $linkactivity = $msgbodyinfo['nomactivite'] . " " . $msgbodyinfo['urlactivite'] . "";
+        $linkactivity = $msgbodyinfo['nomactivite'];
         $linkcourse = $coursename;
     }
     $message_body = str_replace('[[linkactivity]]', $linkactivity, $message_body);
