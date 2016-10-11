@@ -2,8 +2,8 @@
 
 ## Purpose
 
-This Moodle plugin allows a teacher to notify course students by email when a new resource/activity 
-is created or modified into a course.
+This Moodle plugin allows a teacher to notify course students by messaging
+when a new resource/activity is created or modified into a course.
 
 The notification is activated by an action performed by the teacher.
 This new action is shown in a new entry at the end of the *Edit* dropdown menu,
@@ -14,7 +14,8 @@ one to the resource, and the other to the course.
 The Moodle admin can modify this default setting.
 The teacher can change the text to send.
 
-The message is sent to all the users enrolled into the course and allowed to view the resource.
+The teacher can control who the message is sent to, by default all the users enrolled 
+into the course and allowed to view the resource.
 The notification conforms to resource access restrictions such as course groups.
 
 
