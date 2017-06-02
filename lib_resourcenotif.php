@@ -109,13 +109,27 @@ function resourcenotif_send_notification($users, $msg, $infolog) {
  * @return string message interface
  */
 function resourcenotif_get_result_action_notification($infolog) {
+    global $CFG;
+
     if ($infolog['nb'] == 0) {
         return get_string('nomessagesend', 'local_resourcenotif');
     }
     $message = get_string('numbernotification', 'local_resourcenotif', $infolog['nb']);
     //log
-    add_to_log($infolog['courseid'], 'resourcenotif', 'send notification_course',
-        $infolog['cmurl'], $message , $infolog['cmid'], $infolog['userid']);
+    if ($CFG->version > 2014051200) { // Moodle 2.7+
+        $event = \local_resourcenotif\event\notification_send::create(array(
+            'courseid' => $infolog['courseid'],
+            'userid' => $infolog['userid'],
+            'context' => context_module::instance( $infolog['cmid'] ),
+            'other' => array(
+                'message' => $message
+            )
+        ));
+        $event->trigger();
+    }else{
+        add_to_log($infolog['courseid'], 'resourcenotif', 'send notification_course',
+            $infolog['cmurl'], $message , $infolog['cmid'], $infolog['userid']);
+    }
     return $message;
 }
 
