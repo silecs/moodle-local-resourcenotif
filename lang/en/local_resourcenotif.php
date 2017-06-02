@@ -11,6 +11,7 @@ $string['pluginname'] = 'Resource notification';
 $string['allstudentrecipient'] = 'This message will be sent to all users enrolled to this course ({$a}).';
 $string['body'] = 'Message body: ';
 $string['complement'] = 'Message complement: ';
+$string['event'] = 'Notification send';
 $string['grouprecipient'] = 'The following message will be sent to users permitted to view <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest}).';
 $string['nomessagesend'] = 'No sent message.';
 $string['norecipient'] = 'No recipient.';
