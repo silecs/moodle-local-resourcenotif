@@ -96,12 +96,12 @@ function resourcenotif_send_notification($users, $msg, $infolog) {
     global $USER;
     $nb = 0;
     foreach ($users as $user) {
-        $res = resourcenotif_send_email($user, $msg);
+        $res = resourcenotif_send_email($user, $msg, $infolog['courseid']);
         if ($res) {
             ++$nb;
         }
     }
-    resourcenotif_send_email($USER, $msg);
+    resourcenotif_send_email($USER, $msg, $infolog['courseid']);
     $infolog['nb'] = $nb;
     return resourcenotif_get_result_action_notification($infolog);
 }
@@ -125,15 +125,17 @@ function resourcenotif_get_result_action_notification($infolog) {
  *
  * @param string $email
  * @param object $msg
+ * @param int $courseid
  * @return mixed false ou resultat de la fonction email_to_user()
  **/
-function resourcenotif_send_email($user, $msg) {
+function resourcenotif_send_email($user, $msg, $courseid) {
     global $USER;
 
     if (!isset($user->email) && empty($user->email)) {
         return false;
     }
     $eventdata = new \core\message\message();
+    $eventdata->courseid = (int)$courseid;
     $eventdata->component = 'local_resourcenotif';
     $eventdata->name = 'resourcenotif_notification';
     $eventdata->userfrom = $USER;
