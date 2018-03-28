@@ -96,7 +96,7 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
 
         $mform->addElement('header', 'complementheader', get_string('complement', 'local_resourcenotif') );
         $mform->setExpanded('complementheader');
-        $mform->addElement('textarea', 'complement', null, ['rows' => 5, 'class' => 'complement']);
+        $mform->addElement('textarea', 'complement', null, ['rows' => 5, 'class' => 'complement', 'style' => 'resize:both;']);
         $mform->setType('complement',PARAM_RAW);
 
         //-------------------------------------------------------------------------------
