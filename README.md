@@ -26,6 +26,8 @@ The notification conforms to resource access restrictions such as course groups.
 Moodle has changed the way it loads plugins with its 3.1 version.
 The new API was introduced in Moodle 3.0, hence the requirements.
 
+Since 2018, the plugin package uses AMOS to translate the strings.
+You can help contribute new languages.
 
 ## Installation
 
@@ -41,4 +43,7 @@ and initially sponsored by [Université Paris 1 Panthéon-Sorbonne, France](http
 
 Additional enhancements and migration to Moodle 3.x were sponsored by
 [Xi’an Jiaotong-Liverpool University (XJTLU)](http://www.xjtlu.edu.cn/en/academics/aec.html), China.
+Additional update to Moodle 3.2+ (Boost theme) has been sponsored by 
+[Institut de Formation aux Métiers de la Santé](https://www.ch-valenciennes.fr/formation/ifms/)
+de Valenciennes, France.
 
