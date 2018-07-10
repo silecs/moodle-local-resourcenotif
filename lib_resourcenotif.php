@@ -150,6 +150,7 @@ function resourcenotif_send_email($user, $msg, $courseid) {
     // it will have priority over the 2 other fields, with a hard coded FORMAT_PLAIN.
     // But some output plugins may need it, as jabber currently does.
     $eventdata->smallmessage = "";
+    $eventdata->contexturl = new moodle_url('/course/view.php', array('id' => $eventdata->courseid));
     return message_send($eventdata);
 }
 
