@@ -21,7 +21,7 @@ The notification conforms to resource access restrictions such as course groups.
 
 ## Requirements
 
-* Moodle 3.0 is required
+* Moodle 3.2 is required
 
 Moodle has changed the way it loads plugins with its 3.1 version.
 The new API was introduced in Moodle 3.0, hence the requirements.
