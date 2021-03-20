@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    local_resourcenotif
- * @copyright  2012-2018 Silecs {@link http://www.silecs.info/societe}
+ * @copyright  2012-2021 Silecs {@link http://www.silecs.info/societe}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
