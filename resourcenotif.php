@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    local_resourcenotif
- * @copyright  2012-2018 Silecs {@link http://www.silecs.info/societe}
+ * @copyright  2012-2021 Silecs {@link http://www.silecs.info/societe}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -37,12 +37,12 @@ $PAGE->set_url($url);
 $site = get_site();
 
 $msgresult = '';
-$infolog = array();
-$infolog['courseid'] = $cm->course;
-$infolog['cmid'] = $cm->id;
-$infolog['cmurl'] = $url;
-$infolog['userid'] = $USER->id;
-
+$infolog = [
+    'courseid' => $cm->course,
+    'cmid' => $cm->id,
+    'cmurl' => $url,
+    'userid' => $USER->id
+    ];
 $urlcourse = $CFG->wwwroot . '/course/view.php?id='.$course->id;
 $urlactivite = $CFG->wwwroot . '/mod/' . $moduletype . '/view.php?id=' . $cm->id;
 $urleditactivite = $CFG->wwwroot . '/course/modedit.php?update=' . $cm->id;
@@ -51,16 +51,17 @@ $coursepath = resourcenotif_get_pathcategories_course($PAGE->categories, $course
 
 $mailsubject = resourcenotif_get_email_subject($course->shortname, format_string($cm->name));
 
-$msgbodyinfo = array();
-$msgbodyinfo['user'] = $USER->firstname . ' ' . $USER->lastname;
-$msgbodyinfo['shortnamesite'] = $site->shortname;
-$msgbodyinfo['nomactivite'] = format_string($cm->name);
-$msgbodyinfo['urlactivite'] = $urlactivite;
-$msgbodyinfo['editactivite'] = $urleditactivite;
-$msgbodyinfo['urlcourse'] = $urlcourse;
-$msgbodyinfo['shortnamecourse'] = $course->shortname;
-$msgbodyinfo['fullnamecourse'] = $course->fullname;
-$msgbodyinfo['coursepath'] = $coursepath;
+$msgbodyinfo = [
+    'user' => $USER->firstname . ' ' . $USER->lastname,
+    'shortnamesite' => $site->shortname,
+    'nomactivite' => format_string($cm->name),
+    'urlactivite' => $urlactivite,
+    'editactivite' => $urleditactivite,
+    'urlcourse' => $urlcourse,
+    'shortnamecourse' => $course->shortname,
+    'fullnamecourse' => $course->fullname,
+    'coursepath' => $coursepath,
+    ];
 
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($module->name));
@@ -68,7 +69,6 @@ $PAGE->requires->css(new moodle_url('/local/resourcenotif/resourcenotif.css'));
 
 $recipicents = '';
 $students = resourcenotif_get_users_from_course($course->id, 'student');
-$notifiedStudents = [];
 
 $modinfo = get_fast_modinfo($course)->get_cm($cm->id);
 $info = new \core_availability\info_module($modinfo);
@@ -81,11 +81,16 @@ if ($nbNotifiedStudents == 0) {
     $recipicents = resourcenotif_get_recipient_label($nbNotifiedStudents, $cm->availability, $msgbodyinfo);
 }
 
-$infoform = ['urlactivite' => $urlactivite, 'coursepath' => $coursepath,
-    'courseid' => $course->id, 'recipicents' => $recipicents, 'nbNotifiedStudents' => $nbNotifiedStudents];
-$infoform['mailsubject'] = $mailsubject;
-$infoform['msgbodyinfo'] = $msgbodyinfo;
-$infoform['siteshortname'] = $site->shortname;
+$infoform = [
+    'urlactivite' => $urlactivite,
+    'coursepath' => $coursepath,
+    'courseid' => $course->id,
+    'recipicents' => $recipicents,
+    'nbNotifiedStudents' => $nbNotifiedStudents,
+    'mailsubject' => $mailsubject,
+    'msgbodyinfo' => $msgbodyinfo,
+    'siteshortname' => $site->shortname
+    ];
 $mform = new local_resourcenotif_resourcenotif_form(null, $infoform);
 
 $newformdata = ['id'=>$id, 'mod' => $moduletype, 'courseid' => $course->id];
