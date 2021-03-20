@@ -5,9 +5,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+use \local_resourcenotif\notifstudents;
+use \local_resourcenotif\notification;
 
 require_once($CFG->libdir.'/formslib.php');
 
@@ -34,13 +33,15 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
             $optionsSendAll = ['disabled' => 'disabled'];
             $sendok = false;
         }
-        $mform->addElement('radio', 'send', '', '<span class="fake-fitemtitle">' . $customdata['recipicents'] . '</span>', 'all', $optionsSendAll);
+        $mform->addElement('radio', 'send', '', '<span class="fake-fitemtitle">' . $customdata['recipients'] . '</span>', 'all', $optionsSendAll);
         if($sendok) {
             $mform->setDefault('send', 'all');
         }
 
-        $allgroups = resourcenotif_get_all_groups($customdata['courseid']);
-        $allgroupings = resourcenotif_get_all_groupings($customdata['courseid']);
+        $allgroups = notifstudents::get_all_groups($customdata['courseid']);
+        $allgroupings = notifstudents::get_all_groupings($customdata['courseid']);
+        $liststudents = notifstudents::get_list_students($customdata['courseid']);
+
         $selected = [];
 
         if (count($allgroups)) {
@@ -74,7 +75,6 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
                 . get_string('groupsgroupingsnone', 'local_resourcenotif') . '</span>', 'selection', ['disabled' => 'disabled']);
         }
 
-        $liststudents = resourcenotif_get_list_students($customdata['courseid']);
         if (count($liststudents)) {
             $mform->addElement('radio', 'send', '', '<span class="fake-fitemtitle">' .
                 get_string('selectstudents', 'local_resourcenotif') . '</span>', 'selectionstudents', $optionsSendAll);
@@ -86,7 +86,7 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
         //message
         $mform->addElement('header', 'message', get_string('content', 'local_resourcenotif'));
         $subjectlabel = html_writer::tag('span', get_string('subject', 'local_resourcenotif'), array('class' => 'notificationgras'));
-        $msgbody = resourcenotif_get_email_body($customdata['msgbodyinfo'], 'html');
+        $msgbody = notification::get_email_body($customdata['msgbodyinfo'], 'html');
         $msghtml = html_writer::tag('p', $subjectlabel . $customdata['mailsubject'], array('class' => 'notificationlabel'))
             . html_writer::tag('p', get_string('body', 'local_resourcenotif'), array('class' => 'notificationlabel notificationgras'))
             . html_writer::tag('p', $msgbody, array('class' => 'notificationlabel'));
@@ -109,12 +109,12 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         if (empty($errors)) {
-            $this->validation_recipicent($data, $errors);
+            $this->validation_recipient($data, $errors);
         }
         return $errors;
     }
 
-    private function validation_recipicent($data, &$errors) {
+    private function validation_recipient($data, &$errors) {
         if (isset($data['send'])) {
             if ($data['send'] == 'selection' && !isset($data['groups']) && !isset($data['groupings'])) {
                  $errors['myselected'] = get_string('errorselectgroup', 'local_resourcenotif');
@@ -123,7 +123,7 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
                  $errors['students'] = get_string('errorselectstudent', 'local_resourcenotif');
             }
         } else {
-            $errors['send'] = get_string('errorselectrecipicent', 'local_resourcenotif');
+            $errors['send'] = get_string('errorselectrecipient', 'local_resourcenotif');
         }
         return $errors;
     }

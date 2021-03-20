@@ -4,9 +4,10 @@
  * @copyright  2012-2021 Silecs {@link http://www.silecs.info/societe}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+use \local_resourcenotif\notification;
+use \local_resourcenotif\notifstudents;
 
 require_once("../../config.php");
-require_once('lib_resourcenotif.php');
 require_once('resourcenotif_form.php');
 
 $id = required_param('id', PARAM_INT);
@@ -47,9 +48,9 @@ $urlcourse = $CFG->wwwroot . '/course/view.php?id='.$course->id;
 $urlactivite = $CFG->wwwroot . '/mod/' . $moduletype . '/view.php?id=' . $cm->id;
 $urleditactivite = $CFG->wwwroot . '/course/modedit.php?update=' . $cm->id;
 
-$coursepath = resourcenotif_get_pathcategories_course($PAGE->categories, $course);
+$coursepath = notification::get_pathcategories_course($PAGE->categories, $course);
 
-$mailsubject = resourcenotif_get_email_subject($course->shortname, format_string($cm->name));
+$mailsubject = notification::get_email_subject($course->shortname, format_string($cm->name));
 
 $msgbodyinfo = [
     'user' => $USER->firstname . ' ' . $USER->lastname,
@@ -67,8 +68,8 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($module->name));
 $PAGE->requires->css(new moodle_url('/local/resourcenotif/resourcenotif.css'));
 
-$recipicents = '';
-$students = resourcenotif_get_users_from_course($course->id, 'student');
+$recipients = '';
+$students = notifstudents::get_users_from_course($course->id, 'student');
 
 $modinfo = get_fast_modinfo($course)->get_cm($cm->id);
 $info = new \core_availability\info_module($modinfo);
@@ -76,16 +77,16 @@ $notifiedStudents = $info->filter_user_list($students);
 $nbNotifiedStudents = count($notifiedStudents);
 
 if ($nbNotifiedStudents == 0) {
-    $recipicents = get_string('norecipient', 'local_resourcenotif');
+    $recipients = get_string('norecipient', 'local_resourcenotif');
 } else {
-    $recipicents = resourcenotif_get_recipient_label($nbNotifiedStudents, $cm->availability, $msgbodyinfo);
+    $recipients = notification::get_recipient_label($nbNotifiedStudents, $cm->availability, $msgbodyinfo);
 }
 
 $infoform = [
     'urlactivite' => $urlactivite,
     'coursepath' => $coursepath,
     'courseid' => $course->id,
-    'recipicents' => $recipicents,
+    'recipients' => $recipients,
     'nbNotifiedStudents' => $nbNotifiedStudents,
     'mailsubject' => $mailsubject,
     'msgbodyinfo' => $msgbodyinfo,
@@ -102,10 +103,10 @@ if ($mform->is_cancelled()) {
 }
 
 if ($formdata) {
-    $msg = resourcenotif_get_notification_message($mailsubject, $msgbodyinfo, $formdata->complement);
+    $msg = notification::get_notification_message($mailsubject, $msgbodyinfo, $formdata->complement);
     if ($formdata->send == 'all') {
         if (count($notifiedStudents)) {
-            $msgresult = resourcenotif_send_notification($notifiedStudents, $msg, $infolog);
+            $msgresult = notification::send_notification($notifiedStudents, $msg, $infolog);
         }
     } elseif ($formdata->send == 'selection') {
         $groups = [];
@@ -116,9 +117,9 @@ if ($formdata) {
         if (isset($formdata->groupings) && count($formdata->groupings)) {
            $groupings =  $formdata->groupings;
         }
-        $grpNotifiedStudents = resourcenotif_get_users_recipicents($groups, $groupings);
+        $grpNotifiedStudents = notifstudents::get_users_recipients($groups, $groupings);
         if (count($grpNotifiedStudents)) {
-            $msgresult = resourcenotif_send_notification($grpNotifiedStudents, $msg, $infolog);
+            $msgresult = notification::send_notification($grpNotifiedStudents, $msg, $infolog);
         }
     } elseif ($formdata->send == 'selectionstudents') {
         $listidstudents = $formdata->students;
@@ -127,7 +128,7 @@ if ($formdata) {
             foreach ($listidstudents as $id) {
                 $notifiedS[$id] = $students[$id];
             }
-            $msgresult = resourcenotif_send_notification($notifiedS, $msg, $infolog);
+            $msgresult = notification::send_notification($notifiedS, $msg, $infolog);
         }
     }
 }
