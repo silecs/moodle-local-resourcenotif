@@ -38,9 +38,10 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
             $mform->setDefault('send', 'all');
         }
 
-        $allgroups = notifstudents::get_all_groups($customdata['courseid']);
-        $allgroupings = notifstudents::get_all_groupings($customdata['courseid']);
-        $liststudents = notifstudents::get_list_students($customdata['courseid']);
+        $notifrecipients = new notifstudents($customdata['courseid']);
+        $allgroups = $notifrecipients->get_all_groups();
+        $allgroupings = $notifrecipients->get_all_groupings();
+        $liststudents = $notifrecipients->get_list_students();
 
         $selected = [];
 

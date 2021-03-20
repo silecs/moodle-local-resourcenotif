@@ -9,6 +9,14 @@ namespace local_resourcenotif;
 
 class notifstudents
 {
+
+    public $courseid;
+
+    public function __construct(int $courseid)
+    {
+        $this->courseid = $courseid;
+    }
+
     /**
      * renvoie les utilisateurs ayant le rôle 'rolename'
      * dans le cours $courseid
@@ -17,17 +25,17 @@ class notifstudents
      * @param string $rolename shortname du rôle
      * @return array [users...]
      */
-    public static function get_users_from_course($courseid, $rolename) {
+    public function get_users_from_course($rolename) {
         global $DB;
-        $coursecontext = \context_course::instance($courseid);
-        $rolestudent = $DB->get_record('role', array('shortname'=> $rolename));
-        $studentcontext = get_users_from_role_on_context($rolestudent, $coursecontext);
+        $coursecontext = \context_course::instance($this->courseid);
+        $roletarget = $DB->get_record('role', ['shortname'=> $rolename]);
+        $targetcontext = get_users_from_role_on_context($roletarget, $coursecontext);
 
-        if (count($studentcontext) == 0) {
-            return $studentcontext;
+        if (count($targetcontext) == 0) {
+            return $targetcontext;
         }
         $ids = [];
-        foreach ($studentcontext as $sc) {
+        foreach ($targetcontext as $sc) {
             $ids[] = (int) $sc->userid;
         }
         $sql = "SELECT * FROM {user} WHERE id IN (" . join(",", $ids) . ")";
@@ -39,12 +47,11 @@ class notifstudents
     /**
      * Renvoie tous les groupes d'un cours
      *
-     * @param int $courseid
      * @return array groups
      */
-    public static function get_all_groups($courseid) {
+    public function get_all_groups() {
         $groups = [];
-        $allgroups = groups_get_all_groups($courseid);
+        $allgroups = groups_get_all_groups($this->courseid);
         if (count($allgroups)) {
             foreach ($allgroups as $id => $group) {
                 $groups[$id] = $group->name;
@@ -56,12 +63,11 @@ class notifstudents
     /**
      * Retourne tous les groupements d'un cours
      *
-     * @param int $courseid
      * @return array $groupings
      */
-    public static function get_all_groupings($courseid) {
+    public function get_all_groupings() {
         $groupings = [];
-        $allgroupings = groups_get_all_groupings($courseid);
+        $allgroupings = groups_get_all_groupings($this->courseid);
         if (count($allgroupings)) {
             foreach ($allgroupings as $id => $grouping) {
                 $groupings[$id] = $grouping->name;
@@ -75,12 +81,11 @@ class notifstudents
      *
      * @todo Should use `fullname()` instead of hardcoded format.
      *
-     * @param int $courseid
      * @return array [id => studentname]
      **/
-    public static function get_list_students($courseid) {
+    public function get_list_students() {
         $listStudent = [];
-        $students = self::get_users_from_course($courseid, 'student');
+        $students = $this->get_users_from_course('student');
         if (!empty($students)) {
             foreach ($students as $id => $student) {
                 $listStudent[$id] = $student->firstname . ' ' . $student->lastname;

@@ -68,8 +68,8 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($module->name));
 $PAGE->requires->css(new moodle_url('/local/resourcenotif/resourcenotif.css'));
 
-$recipients = '';
-$students = notifstudents::get_users_from_course($course->id, 'student');
+$notifrecipients = new notifstudents($course->id);
+$students = $notifrecipients->get_users_from_course('student');
 
 $modinfo = get_fast_modinfo($course)->get_cm($cm->id);
 $info = new \core_availability\info_module($modinfo);
