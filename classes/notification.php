@@ -51,7 +51,7 @@ class notification
             return get_string('norecipient', 'local_resourcenotif');
         }
         if ($availability) {
-            $a = new stdClass();
+            $a = new \stdClass();
             $a->nbdest = $nbdest;
             $a->linkactivity = $msgbodyinfo['urlactivite'];
             $a->nameactivity = $msgbodyinfo['nomactivite'];
