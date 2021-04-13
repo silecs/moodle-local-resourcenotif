@@ -6,9 +6,9 @@
  */
 use \local_resourcenotif\notification;
 use \local_resourcenotif\notifstudents;
+use \local_resourcenotif\resourcenotif_form;
 
 require_once("../../config.php");
-require_once('resourcenotif_form.php');
 
 $id = required_param('id', PARAM_INT);
 
@@ -92,7 +92,7 @@ $infoform = [
     'msgbodyinfo' => $msgbodyinfo,
     'siteshortname' => $site->shortname
     ];
-$mform = new local_resourcenotif_resourcenotif_form(null, $infoform);
+$mform = new resourcenotif_form(null, $infoform);
 
 $newformdata = ['id'=>$id, 'mod' => $moduletype, 'courseid' => $course->id];
 $mform->set_data($newformdata);

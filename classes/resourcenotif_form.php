@@ -4,13 +4,14 @@
  * @copyright  2012-2021 Silecs {@link http://www.silecs.info/societe}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace local_resourcenotif;
 
 use \local_resourcenotif\notifstudents;
 use \local_resourcenotif\notification;
 
 require_once($CFG->libdir.'/formslib.php');
 
-class local_resourcenotif_resourcenotif_form extends moodleform {
+class resourcenotif_form extends \moodleform {
     public function definition() {
         global $CFG;
 
@@ -86,11 +87,11 @@ class local_resourcenotif_resourcenotif_form extends moodleform {
 
         //message
         $mform->addElement('header', 'message', get_string('content', 'local_resourcenotif'));
-        $subjectlabel = html_writer::tag('span', get_string('subject', 'local_resourcenotif'), array('class' => 'notificationgras'));
+        $subjectlabel = \html_writer::tag('span', get_string('subject', 'local_resourcenotif'), array('class' => 'notificationgras'));
         $msgbody = notification::get_email_body($customdata['msgbodyinfo'], 'html');
-        $msghtml = html_writer::tag('p', $subjectlabel . $customdata['mailsubject'], array('class' => 'notificationlabel'))
-            . html_writer::tag('p', get_string('body', 'local_resourcenotif'), array('class' => 'notificationlabel notificationgras'))
-            . html_writer::tag('p', $msgbody, array('class' => 'notificationlabel'));
+        $msghtml = \html_writer::tag('p', $subjectlabel . $customdata['mailsubject'], array('class' => 'notificationlabel'))
+            . \html_writer::tag('p', get_string('body', 'local_resourcenotif'), array('class' => 'notificationlabel notificationgras'))
+            . \html_writer::tag('p', $msgbody, array('class' => 'notificationlabel'));
 
         $mform->addElement('html', $msghtml);
         $mform->setExpanded('message');
