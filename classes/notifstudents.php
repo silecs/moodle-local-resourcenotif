@@ -4,8 +4,10 @@
  * @copyright  2012-2021 Silecs {@link http://www.silecs.info/societe}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 namespace local_resourcenotif;
+
+require_once($CFG->dirroot . '/user/lib.php');
+require_once($CFG->libdir . '/externallib.php');
 
 class notifstudents
 {
@@ -79,16 +81,14 @@ class notifstudents
     /**
      * Renvoie le tableau des étudiants inscrit à un cours
      *
-     * @todo Should use `fullname()` instead of hardcoded format.
-     *
-     * @return array [id => studentname]
+     * @return array [id => student_fullname]
      **/
     public function get_list_students() {
         $listStudent = [];
         $students = $this->get_users_from_course('student');
         if (!empty($students)) {
             foreach ($students as $id => $student) {
-                $listStudent[$id] = $student->firstname . ' ' . $student->lastname;
+                $listStudent[$id] = user_get_user_details($student)['fullname'];
             }
         }
         return $listStudent;
