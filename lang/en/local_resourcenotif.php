@@ -12,7 +12,7 @@ $string['body'] = 'Message body: ';
 $string['complement'] = 'Additional comments (optional): ';
 $string['content'] = 'Content';
 $string['errorselectgroup'] = 'You must select at least one group/grouping';
-$string['errorselectrecipicent'] = 'Please select a recipicent';
+$string['errorselectrecipient'] = 'Please select a recipient';
 $string['errorselectstudent'] = 'You must select at least one participant';
 $string['groupsgroupingsnone'] = 'No groups/groupings';
 $string['grouprecipient'] = 'Participants permitted to view <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest} users - Restrict access conditions have been applied to this activity/resource; <a href="{$a->editactivity}">view details</a>)';
