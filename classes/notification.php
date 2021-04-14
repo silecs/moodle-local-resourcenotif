@@ -16,7 +16,6 @@ class notification
     /** @var string $moduletype */
     public $moduletype;
 
-    private $emailsubject;
     private $msgbodyinfo;
     private $nbsent = 0;
     private $message; //complete notification message
@@ -26,38 +25,33 @@ class notification
         $this->course = $course;
         $this->cm = $cm;
         $this->moduletype = $moduletype;
-
-        $this->emailsubject = $this->get_email_subject();
     }
 
     public function set_message_body_info()
     {
-        global $USER, $CFG;
-        $urlactivite = $CFG->wwwroot . '/mod/' . $this->moduletype . '/view.php?id=' . $this->cm->id;
-        $urleditactivite = $CFG->wwwroot . '/course/modedit.php?update=' . $this->cm->id;
+        global $USER;
         $site = \get_site();
 
         $this->msgbodyinfo = [
             'user' => $USER->firstname . ' ' . $USER->lastname,
             'shortnamesite' => $site->shortname,
-            'nomactivite' => format_string($this->cm->name),
-            'urlactivite' => $urlactivite,
-            'editactivite' => $urleditactivite,
-            'urlcourse' => $CFG->wwwroot . '/course/view.php?id=' . $this->course->id,
+            'nameactivity' => format_string($this->cm->name),
+            'urlactivity' => new \moodle_url('/mod/' . $this->moduletype . '/view.php', ['id' => $this->cm->id]),
+            'urlcourse' => new \moodle_url('/course/view.php', ['id' => $this->course->id]),
             'shortnamecourse' => $this->course->shortname,
             'fullnamecourse' => $this->course->fullname,
         ];
     }
 
     /**
-     * construit l'objet $message contenant le sujet et le corps de message version texte et html
+     * build the $message attribute (subject, text body and html body)
      *
      * @param string $complement
      * @return bool
      */
     public function set_notification_message($complement) {
         $message = new \stdClass();
-        $message->subject = $this->emailsubject;
+        $message->subject = $this->get_message_subject();
         $message->from = $this->msgbodyinfo['shortnamesite'];
         $comhtml = '';
         $comtext = '';
@@ -65,18 +59,18 @@ class notification
             $comhtml .= format_text($complement, FORMAT_MOODLE);
             $comtext .= "\n\n" . $complement;
         }
-        $message->bodyhtml = '<p>' . self::get_email_body('html') . '</p>'
+        $message->bodyhtml = '<p>' . $this->get_message_body('html') . '</p>'
             . $comhtml;
-        $message->bodytext = self::get_email_body('text')
+        $message->bodytext = $this->get_message_body('text')
             . $comtext
-            . "\n" . $this->msgbodyinfo['nomactivite'] . "\n" . $this->msgbodyinfo['urlactivite'];
+            . "\n" . $this->msgbodyinfo['nameactivity'] . "\n" . $this->msgbodyinfo['urlactivity'];
 
         $this->message = $message;
         return true;
     }
 
     /**
-     * préparer les données personnalisées (customdata) à passer au formulaire
+     * prepare the customdata to pass to the main form
      * @param array $notifiablestudents
      * @return array
      */
@@ -89,14 +83,14 @@ class notification
         }
 
         $infoform = [
-            'urlactivite' => $this->msgbodyinfo['urlactivite'],
+            'urlactivity' => $this->msgbodyinfo['urlactivity'],
             'courseid' => $this->course->id,
             'recipients' => $recipients,
             'nbNotifiedStudents' => count($notifiablestudents),
-            'emailsubject' => $this->emailsubject,
+            'emailsubject' => $this->get_message_subject(),
             'msgbodyinfo' => $this->msgbodyinfo,
             'siteshortname' => $this->msgbodyinfo['shortnamesite'],
-            'formmsgbody' => $this->get_email_body('html'),
+            'formmsgbody' => $this->get_message_body('html'),
             'cm' => $this->cm,
             ];
         return $infoform;
@@ -104,8 +98,7 @@ class notification
 
 
     /**
-     * construit le messsage d'interface du nombre et de la qualité des
-     * destinataires du message
+     * build the interface message : number and type of recipients
      *
      * @param int $nbdest
      * @return string
@@ -117,9 +110,8 @@ class notification
         if ($this->cm->availability) {
             $a = new \stdClass();
             $a->nbdest = $nbdest;
-            $a->linkactivity = $this->msgbodyinfo['urlactivite'];
-            $a->nameactivity = $this->msgbodyinfo['nomactivite'];
-            $a->editactivity = $this->msgbodyinfo['editactivite'];
+            $a->linkactivity = $this->msgbodyinfo['urlactivity'];
+            $a->nameactivity = $this->msgbodyinfo['nameactivity'];
             return get_string('grouprecipient', 'local_resourcenotif', $a);
         } else {
             return get_string('allstudentrecipient', 'local_resourcenotif', $nbdest);
@@ -160,7 +152,7 @@ class notification
     }
 
     /**
-     * Envoie un email à l'adresse mail spécifiée
+     * Envoie un message interne à l'utilisateur spécifié
      *
      * @param stdClass $user
      * @return mixed false ou resultat de la fonction message_send()
@@ -192,11 +184,11 @@ class notification
     }
 
     /**
-     * construit le sujet du mail envoyé
+     * build the message subject
      *
      * @return string
      */
-    private function get_email_subject() {
+    private function get_message_subject() {
         $subject = sprintf('%s %s - %s',
             get_string('notification', 'local_resourcenotif'),
             $this->course->shortname,
@@ -209,16 +201,16 @@ class notification
      * @param string $type 'hmtl' or 'txt'
      * return string
      */
-    public function get_email_body($type) {
+    public function get_message_body($type) {
         $message_body = get_config('local_resourcenotif','message_body');
         $coursename = $this->msgbodyinfo['fullnamecourse'];
         $message_body = str_replace('[[sender]]', $this->msgbodyinfo['user'], $message_body);
 
         if ($type == 'html') {
-            $linkactivity = \html_writer::link($this->msgbodyinfo['urlactivite'], $this->msgbodyinfo['nomactivite']);
+            $linkactivity = \html_writer::link($this->msgbodyinfo['urlactivity'], $this->msgbodyinfo['nameactivity']);
             $linkcourse = \html_writer::link($this->msgbodyinfo['urlcourse'], $coursename);
         } else {
-            $linkactivity = $this->msgbodyinfo['nomactivite'];
+            $linkactivity = $this->msgbodyinfo['nameactivity'];
             $linkcourse = $coursename;
         }
         $message_body = str_replace('[[linkactivity]]', $linkactivity, $message_body);

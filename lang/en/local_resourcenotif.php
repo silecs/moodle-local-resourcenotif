@@ -15,7 +15,7 @@ $string['errorselectgroup'] = 'You must select at least one group/grouping';
 $string['errorselectrecipient'] = 'Please select a recipient';
 $string['errorselectstudent'] = 'You must select at least one participant';
 $string['groupsgroupingsnone'] = 'No groups/groupings';
-$string['grouprecipient'] = 'Participants permitted to view <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest} users - Restrict access conditions have been applied to this activity/resource; <a href="{$a->editactivity}">view details</a>)';
+$string['grouprecipient'] = 'Participants allowed to view <a href="{$a->linkactivity}">{$a->nameactivity}</a> ({$a->nbdest} users - Restrict access conditions have been applied to this activity/resource)';
 $string['nomessagesend'] = 'No sent message.';
 $string['norecipient'] = 'No recipient.';
 $string['numbernotification'] = 'Number of notifications sent: {$a}';
