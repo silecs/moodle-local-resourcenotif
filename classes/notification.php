@@ -9,8 +9,6 @@ namespace local_resourcenotif;
 
 class notification
 {
-    /** @var array stdClass[] $categories */
-    public $categories = []; //array of categories records, provided by $PAGE->categories
     /** @var stdClass $course course record */
     public $course; //
     /** @var stdClass $cm course_modules record */
@@ -23,9 +21,8 @@ class notification
     private $nbsent = 0;
     private $message; //complete notification message
 
-    public function __construct($categories, $course, $cm, $moduletype)
+    public function __construct($course, $cm, $moduletype)
     {
-        $this->categories = $categories;
         $this->course = $course;
         $this->cm = $cm;
         $this->moduletype = $moduletype;
@@ -49,7 +46,6 @@ class notification
             'urlcourse' => $CFG->wwwroot . '/course/view.php?id=' . $this->course->id,
             'shortnamecourse' => $this->course->shortname,
             'fullnamecourse' => $this->course->fullname,
-            'coursepath' => $this->get_pathcategories_course(),
         ];
     }
 
@@ -73,7 +69,6 @@ class notification
             . $comhtml;
         $message->bodytext = self::get_email_body('text')
             . $comtext
-            . "\n\n" . $this->msgbodyinfo['coursepath']
             . "\n" . $this->msgbodyinfo['nomactivite'] . "\n" . $this->msgbodyinfo['urlactivite'];
 
         $this->message = $message;
@@ -95,7 +90,6 @@ class notification
 
         $infoform = [
             'urlactivite' => $this->msgbodyinfo['urlactivite'],
-            'coursepath' => $this->msgbodyinfo['coursepath'],
             'courseid' => $this->course->id,
             'recipients' => $recipients,
             'nbNotifiedStudents' => count($notifiablestudents),
@@ -230,22 +224,6 @@ class notification
         $message_body = str_replace('[[linkactivity]]', $linkactivity, $message_body);
         $message_body = str_replace('[[linkcourse]]', $linkcourse, $message_body);
         return $message_body;
-    }
-
-    /**
-     * returns the path "categories ... > course"
-     *
-     * @return string path
-     */
-    private function get_pathcategories_course() {
-        $tabcat = [];
-        if (count($this->categories)) {
-            foreach ($this->categories as $category) {
-                $tabcat[$category->depth] = $category->name;
-            }
-            ksort($tabcat);
-        }
-        return join(' > ', $tabcat) . $this->course->shortname;
     }
 
 }

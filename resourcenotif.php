@@ -39,7 +39,7 @@ $msgresult = '';
 
 $urlcourse = $CFG->wwwroot . '/course/view.php?id=' . $course->id;
 
-$notificationprocess = new notification($PAGE->categories, $course, $cm, $moduletype);
+$notificationprocess = new notification($course, $cm, $moduletype);
 $notificationprocess->set_message_body_info();
 
 $PAGE->set_heading(format_string($course->fullname));
