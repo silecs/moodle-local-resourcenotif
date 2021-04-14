@@ -16,15 +16,15 @@ if (! $cm = get_coursemodule_from_id('', $id)) {
     print_error('invalidcoursemodule');
 }
 
-if (! $moduletype = $DB->get_field('modules', 'name', array('id'=>$cm->module), MUST_EXIST)) {
+if (! $moduletype = $DB->get_field('modules', 'name', ['id' => $cm->module], MUST_EXIST)) {
     print_error('invalidmodule');
 }
 
-if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
+if (! $course = $DB->get_record('course', ['id' => $cm->course])) {
     print_error('coursemisconf');
 }
 
-if (! $module = $DB->get_record($moduletype, array("id"=>$cm->instance))) {
+if (! $module = $DB->get_record($moduletype, ['id' => $cm->instance])) {
     print_error('invalidcoursemodule');
 }
 
@@ -32,69 +32,27 @@ require_login($course, false, $cm);
 $modcontext = context_module::instance($cm->id);
 require_capability('moodle/course:manageactivities', $modcontext);
 
-$url = new moodle_url('/local/resourcenotif/resourcenotif.php', array('id'=>$id));
+$url = new moodle_url('/local/resourcenotif/resourcenotif.php', ['id' => $id]);
 $PAGE->set_url($url);
 
-$site = get_site();
-
 $msgresult = '';
-$infolog = [
-    'courseid' => $cm->course,
-    'cmid' => $cm->id,
-    'cmurl' => $url,
-    'userid' => $USER->id
-    ];
-$urlcourse = $CFG->wwwroot . '/course/view.php?id='.$course->id;
-$urlactivite = $CFG->wwwroot . '/mod/' . $moduletype . '/view.php?id=' . $cm->id;
-$urleditactivite = $CFG->wwwroot . '/course/modedit.php?update=' . $cm->id;
 
-$coursepath = notification::get_pathcategories_course($PAGE->categories, $course);
+$urlcourse = $CFG->wwwroot . '/course/view.php?id=' . $course->id;
 
-$mailsubject = notification::get_email_subject($course->shortname, format_string($cm->name));
-
-$msgbodyinfo = [
-    'user' => $USER->firstname . ' ' . $USER->lastname,
-    'shortnamesite' => $site->shortname,
-    'nomactivite' => format_string($cm->name),
-    'urlactivite' => $urlactivite,
-    'editactivite' => $urleditactivite,
-    'urlcourse' => $urlcourse,
-    'shortnamecourse' => $course->shortname,
-    'fullnamecourse' => $course->fullname,
-    'coursepath' => $coursepath,
-    ];
+$notificationprocess = new notification($PAGE->categories, $course, $cm, $moduletype);
+$notificationprocess->set_message_body_info();
 
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($module->name));
 $PAGE->requires->css(new moodle_url('/local/resourcenotif/resourcenotif.css'));
 
-$notifrecipients = new notifstudents($course->id);
-$students = $notifrecipients->get_users_from_course('student');
+$notifrecipients = new notifstudents($course->id, $cm);
+$notifiablestudents = $notifrecipients->get_users_from_course('student');
 
-$modinfo = get_fast_modinfo($course)->get_cm($cm->id);
-$info = new \core_availability\info_module($modinfo);
-$notifiedStudents = $info->filter_user_list($students);
-$nbNotifiedStudents = count($notifiedStudents);
+$formcustomdata = $notificationprocess->get_form_customdata($notifiablestudents);
+$mform = new resourcenotif_form(null, $formcustomdata);
 
-if ($nbNotifiedStudents == 0) {
-    $recipients = get_string('norecipient', 'local_resourcenotif');
-} else {
-    $recipients = notification::get_recipient_label($nbNotifiedStudents, $cm->availability, $msgbodyinfo);
-}
-
-$infoform = [
-    'urlactivite' => $urlactivite,
-    'coursepath' => $coursepath,
-    'courseid' => $course->id,
-    'recipients' => $recipients,
-    'nbNotifiedStudents' => $nbNotifiedStudents,
-    'mailsubject' => $mailsubject,
-    'msgbodyinfo' => $msgbodyinfo,
-    'siteshortname' => $site->shortname
-    ];
-$mform = new resourcenotif_form(null, $infoform);
-
-$newformdata = ['id'=>$id, 'mod' => $moduletype, 'courseid' => $course->id];
+$newformdata = ['id' => $id, 'mod' => $moduletype, 'courseid' => $course->id];
 $mform->set_data($newformdata);
 $formdata = $mform->get_data();
 
@@ -103,10 +61,11 @@ if ($mform->is_cancelled()) {
 }
 
 if ($formdata) {
-    $msg = notification::get_notification_message($mailsubject, $msgbodyinfo, $formdata->complement);
+    $notificationprocess->set_notification_message($formdata->complement);
+
     if ($formdata->send == 'all') {
-        if (count($notifiedStudents)) {
-            $msgresult = notification::send_notification($notifiedStudents, $msg, $infolog);
+        if (count($notifiablestudents)) {
+            $msgresult = $notificationprocess->send_notifications($notifiablestudents);
         }
     } elseif ($formdata->send == 'selection') {
         $groups = [];
@@ -119,16 +78,16 @@ if ($formdata) {
         }
         $grpNotifiedStudents = notifstudents::get_users_recipients($groups, $groupings);
         if (count($grpNotifiedStudents)) {
-            $msgresult = notification::send_notification($grpNotifiedStudents, $msg, $infolog);
+            $msgresult = $notificationprocess->send_notifications($grpNotifiedStudents);
         }
     } elseif ($formdata->send == 'selectionstudents') {
         $listidstudents = $formdata->students;
         if (count($listidstudents)) {
             $notifiedS = [];
             foreach ($listidstudents as $id) {
-                $notifiedS[$id] = $students[$id];
+                $notifiedS[$id] = $notifiablestudents[$id];
             }
-            $msgresult = notification::send_notification($notifiedS, $msg, $infolog);
+            $msgresult = $notificationprocess->send_notifications($notifiedS);
         }
     }
 }

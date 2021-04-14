@@ -9,53 +9,123 @@ namespace local_resourcenotif;
 
 class notification
 {
+    /** @var array stdClass[] $categories */
+    public $categories = []; //array of categories records, provided by $PAGE->categories
+    /** @var stdClass $course course record */
+    public $course; //
+    /** @var stdClass $cm course_modules record */
+    public $cm; // course module
+    /** @var string $moduletype */
+    public $moduletype;
+
+    private $emailsubject;
+    private $msgbodyinfo;
+    private $nbsent = 0;
+    private $message; //complete notification message
+
+    public function __construct($categories, $course, $cm, $moduletype)
+    {
+        $this->categories = $categories;
+        $this->course = $course;
+        $this->cm = $cm;
+        $this->moduletype = $moduletype;
+
+        $this->emailsubject = $this->get_email_subject();
+    }
+
+    public function set_message_body_info()
+    {
+        global $USER, $CFG;
+        $urlactivite = $CFG->wwwroot . '/mod/' . $this->moduletype . '/view.php?id=' . $this->cm->id;
+        $urleditactivite = $CFG->wwwroot . '/course/modedit.php?update=' . $this->cm->id;
+        $site = \get_site();
+
+        $this->msgbodyinfo = [
+            'user' => $USER->firstname . ' ' . $USER->lastname,
+            'shortnamesite' => $site->shortname,
+            'nomactivite' => format_string($this->cm->name),
+            'urlactivite' => $urlactivite,
+            'editactivite' => $urleditactivite,
+            'urlcourse' => $CFG->wwwroot . '/course/view.php?id=' . $this->course->id,
+            'shortnamecourse' => $this->course->shortname,
+            'fullnamecourse' => $this->course->fullname,
+            'coursepath' => $this->get_pathcategories_course(),
+        ];
+    }
 
     /**
      * construit l'objet $message contenant le sujet et le corps de message version texte et html
      *
-     * @param string $subject
-     * @param mixed $msgbodyinfo
      * @param string $complement
-     * @return object $message
+     * @return bool
      */
-    public static function get_notification_message($subject, $msgbodyinfo, $complement) {
+    public function set_notification_message($complement) {
         $message = new \stdClass();
-        $message->subject = $subject;
-        $message->from = $msgbodyinfo['shortnamesite'];
+        $message->subject = $this->emailsubject;
+        $message->from = $this->msgbodyinfo['shortnamesite'];
         $comhtml = '';
         $comtext = '';
         if (trim($complement)) {
             $comhtml .= format_text($complement, FORMAT_MOODLE);
             $comtext .= "\n\n" . $complement;
         }
-        $message->bodyhtml = '<p>' . self::get_email_body($msgbodyinfo, 'html') . '</p>'
+        $message->bodyhtml = '<p>' . self::get_email_body('html') . '</p>'
             . $comhtml;
-        $message->bodytext = self::get_email_body($msgbodyinfo, 'text')
+        $message->bodytext = self::get_email_body('text')
             . $comtext
-            . "\n\n" . $msgbodyinfo['coursepath']
-            . "\n" . $msgbodyinfo['nomactivite'] . "\n" . $msgbodyinfo['urlactivite'];
-        return $message;
+            . "\n\n" . $this->msgbodyinfo['coursepath']
+            . "\n" . $this->msgbodyinfo['nomactivite'] . "\n" . $this->msgbodyinfo['urlactivite'];
+
+        $this->message = $message;
+        return true;
     }
+
+    /**
+     * préparer les données personnalisées (customdata) à passer au formulaire
+     * @param array $notifiablestudents
+     * @return array
+     */
+    public function get_form_customdata($notifiablestudents)
+    {
+        if ( ! $notifiablestudents ) {
+            $recipients = get_string('norecipient', 'local_resourcenotif');
+        } else {
+            $recipients = $this->get_recipients_label(count($notifiablestudents));
+        }
+
+        $infoform = [
+            'urlactivite' => $this->msgbodyinfo['urlactivite'],
+            'coursepath' => $this->msgbodyinfo['coursepath'],
+            'courseid' => $this->course->id,
+            'recipients' => $recipients,
+            'nbNotifiedStudents' => count($notifiablestudents),
+            'emailsubject' => $this->emailsubject,
+            'msgbodyinfo' => $this->msgbodyinfo,
+            'siteshortname' => $this->msgbodyinfo['shortnamesite'],
+            'formmsgbody' => $this->get_email_body('html'),
+            'cm' => $this->cm,
+            ];
+        return $infoform;
+    }
+
 
     /**
      * construit le messsage d'interface du nombre et de la qualité des
      * destinataires du message
      *
      * @param int $nbdest
-     * @param string $availability
-     * @param array $msgbodyinfo
      * @return string
      */
-    public static function get_recipient_label($nbdest, $availability, $msgbodyinfo) {
+    public function get_recipients_label($nbdest) {
         if ($nbdest == 0) {
             return get_string('norecipient', 'local_resourcenotif');
         }
-        if ($availability) {
+        if ($this->cm->availability) {
             $a = new \stdClass();
             $a->nbdest = $nbdest;
-            $a->linkactivity = $msgbodyinfo['urlactivite'];
-            $a->nameactivity = $msgbodyinfo['nomactivite'];
-            $a->editactivity = $msgbodyinfo['editactivite'];
+            $a->linkactivity = $this->msgbodyinfo['urlactivite'];
+            $a->nameactivity = $this->msgbodyinfo['nomactivite'];
+            $a->editactivity = $this->msgbodyinfo['editactivite'];
             return get_string('grouprecipient', 'local_resourcenotif', $a);
         } else {
             return get_string('allstudentrecipient', 'local_resourcenotif', $nbdest);
@@ -65,62 +135,57 @@ class notification
     /**
      * Envoi une notification aux $users + copie à $USER
      *
-     * @param array $idusers
-     * @param object $msg
-     * @param array $infolog informations pour le log pour les envois de mails
-     * @return string message interface
+     * @param array $users
+     * @return string interface message
      */
-    public static function send_notification($users, $msg, $infolog) {
+    public function send_notifications($users) {
         global $USER;
         $nb = 0;
         foreach ($users as $user) {
-            $res = self::send_email($user, $msg, $infolog['courseid']);
+            $res = $this->send_message($user);
             if ($res) {
                 ++$nb;
             }
         }
-        self::send_email($USER, $msg, $infolog['courseid']);
-        $infolog['nb'] = $nb;
-        return self::get_result_action_notification($infolog);
+        $this->send_message($USER);
+        $this->nbsent = $nb;
+        return $this->get_result_action_notification();
     }
 
     /**
      * construit le message d'interface après l'envoi groupé de notification
      *
-     * @param array $infolog informations pour le log pour les envois de mails
      * @return string message interface
      */
-    private static function get_result_action_notification($infolog) {
-        if ($infolog['nb'] == 0) {
+    private function get_result_action_notification() {
+        if ($this->nbsent == 0) {
             return get_string('nomessagesend', 'local_resourcenotif');
         }
-        $message = get_string('numbernotification', 'local_resourcenotif', $infolog['nb']);
+        $message = get_string('numbernotification', 'local_resourcenotif', $this->nbsent);
         return $message;
     }
 
     /**
      * Envoie un email à l'adresse mail spécifiée
      *
-     * @param string $email
-     * @param object $msg
-     * @param int $courseid
-     * @return mixed false ou resultat de la fonction email_to_user()
+     * @param stdClass $user
+     * @return mixed false ou resultat de la fonction message_send()
      **/
-    private static function send_email($user, $msg, $courseid) {
+    private function send_message($user) {
         global $USER;
 
         if (!isset($user->email) && empty($user->email)) {
             return false;
         }
         $eventdata = new \core\message\message();
-        $eventdata->courseid = (int)$courseid;
+        $eventdata->courseid = (int)$this->course->id;
         $eventdata->component = 'local_resourcenotif';
         $eventdata->name = 'resourcenotif_notification';
         $eventdata->userfrom = $USER;
         $eventdata->userto = $user;
-        $eventdata->subject = $msg->subject;
-        $eventdata->fullmessage = $msg->bodytext;
-        $eventdata->fullmessagehtml = $msg->bodyhtml;
+        $eventdata->subject = $this->message->subject;
+        $eventdata->fullmessage = $this->message->bodytext;
+        $eventdata->fullmessagehtml = $this->message->bodyhtml;
         // With FORMAT_HTML, most outputs will use fullmessagehtml, and convert it to plain text if necessary.
         // but some output plugins will behave differently (airnotifier only uses fullmessage)
         $eventdata->fullmessageformat = FORMAT_HTML;
@@ -135,31 +200,31 @@ class notification
     /**
      * construit le sujet du mail envoyé
      *
-     * @param string $courseshortname
-     * @param string $activitename
      * @return string
      */
-    public static function get_email_subject($courseshortname, $activitename) {
-        $subject = get_string('notification', 'local_resourcenotif')
-            . $courseshortname . ' - ' . $activitename;
+    private function get_email_subject() {
+        $subject = sprintf('%s %s - %s',
+            get_string('notification', 'local_resourcenotif'),
+            $this->course->shortname,
+            \format_string($this->cm->name));
         return $subject;
     }
 
     /**
-     * @param array $msgbodyinfo
-     * @param string $type
+     * interpolate variables in the message body
+     * @param string $type 'hmtl' or 'txt'
      * return string
      */
-    public static function get_email_body($msgbodyinfo, $type) {
+    public function get_email_body($type) {
         $message_body = get_config('local_resourcenotif','message_body');
-        $coursename = $msgbodyinfo['fullnamecourse'];
-        $message_body = str_replace('[[sender]]', $msgbodyinfo['user'], $message_body);
+        $coursename = $this->msgbodyinfo['fullnamecourse'];
+        $message_body = str_replace('[[sender]]', $this->msgbodyinfo['user'], $message_body);
 
         if ($type == 'html') {
-            $linkactivity = \html_writer::link($msgbodyinfo['urlactivite'], $msgbodyinfo['nomactivite']);
-            $linkcourse = \html_writer::link($msgbodyinfo['urlcourse'], $coursename);
+            $linkactivity = \html_writer::link($this->msgbodyinfo['urlactivite'], $this->msgbodyinfo['nomactivite']);
+            $linkcourse = \html_writer::link($this->msgbodyinfo['urlcourse'], $coursename);
         } else {
-            $linkactivity = $msgbodyinfo['nomactivite'];
+            $linkactivity = $this->msgbodyinfo['nomactivite'];
             $linkcourse = $coursename;
         }
         $message_body = str_replace('[[linkactivity]]', $linkactivity, $message_body);
@@ -168,26 +233,19 @@ class notification
     }
 
     /**
-     * Construit le chemin categories > cours
+     * returns the path "categories ... > course"
      *
-     * @param array $categories tableau de tableaux
-     * @param object $course
      * @return string path
      */
-    public static function get_pathcategories_course($categories, $course) {
-        $path ='';
-        $tabcat = array();
-        if (count($categories)) {
-            foreach ($categories as $category) {
+    private function get_pathcategories_course() {
+        $tabcat = [];
+        if (count($this->categories)) {
+            foreach ($this->categories as $category) {
                 $tabcat[$category->depth] = $category->name;
             }
             ksort($tabcat);
-            foreach ($tabcat as $cat) {
-                $path .= $cat . ' > ';
-            }
         }
-        $path .= $course->shortname;
-        return $path;
+        return join(' > ', $tabcat) . $this->course->shortname;
     }
 
 }

@@ -13,10 +13,12 @@ class notifstudents
 {
 
     public $courseid;
+    public $cm;
 
-    public function __construct(int $courseid)
+    public function __construct($courseid, $cm)
     {
         $this->courseid = $courseid;
+        $this->cm = $cm;
     }
 
     /**
@@ -43,7 +45,10 @@ class notifstudents
         $sql = "SELECT * FROM {user} WHERE id IN (" . join(",", $ids) . ")";
         $students = $DB->get_records_sql($sql);
 
-        return $students;
+        $modinfo = \get_fast_modinfo($this->courseid)->get_cm($this->cm->id);
+        $availableinfo = new \core_availability\info_module($modinfo);
+        $notifiablestudents = $availableinfo->filter_user_list($students);
+        return $notifiablestudents;
     }
 
     /**

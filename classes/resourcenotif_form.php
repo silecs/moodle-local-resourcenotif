@@ -39,7 +39,7 @@ class resourcenotif_form extends \moodleform {
             $mform->setDefault('send', 'all');
         }
 
-        $notifrecipients = new notifstudents($customdata['courseid']);
+        $notifrecipients = new notifstudents($customdata['courseid'], $customdata['cm']);
         $allgroups = $notifrecipients->get_all_groups();
         $allgroupings = $notifrecipients->get_all_groupings();
         $liststudents = $notifrecipients->get_list_students();
@@ -88,8 +88,8 @@ class resourcenotif_form extends \moodleform {
         //message
         $mform->addElement('header', 'message', get_string('content', 'local_resourcenotif'));
         $subjectlabel = \html_writer::tag('span', get_string('subject', 'local_resourcenotif'), array('class' => 'notificationgras'));
-        $msgbody = notification::get_email_body($customdata['msgbodyinfo'], 'html');
-        $msghtml = \html_writer::tag('p', $subjectlabel . $customdata['mailsubject'], array('class' => 'notificationlabel'))
+        $msgbody = $customdata['formmsgbody'];
+        $msghtml = \html_writer::tag('p', $subjectlabel . $customdata['emailsubject'], array('class' => 'notificationlabel'))
             . \html_writer::tag('p', get_string('body', 'local_resourcenotif'), array('class' => 'notificationlabel notificationgras'))
             . \html_writer::tag('p', $msgbody, array('class' => 'notificationlabel'));
 
