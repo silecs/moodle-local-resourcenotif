@@ -63,32 +63,36 @@ if ($mform->is_cancelled()) {
 if ($formdata) {
     $notificationprocess->set_notification_message($formdata->complement);
 
-    if ($formdata->send == 'all') {
-        if (count($notifiablestudents)) {
-            $msgresult = $notificationprocess->send_notifications($notifiablestudents);
-        }
-    } elseif ($formdata->send == 'selection') {
-        $groups = [];
-        if (isset($formdata->groups) && count($formdata->groups)) {
-           $groups =  $formdata->groups;
-        }
-        $groupings = [];
-        if (isset($formdata->groupings) && count($formdata->groupings)) {
-           $groupings =  $formdata->groupings;
-        }
-        $grpNotifiedStudents = notifstudents::get_users_recipients($groups, $groupings);
-        if (count($grpNotifiedStudents)) {
-            $msgresult = $notificationprocess->send_notifications($grpNotifiedStudents);
-        }
-    } elseif ($formdata->send == 'selectionstudents') {
-        $listidstudents = $formdata->students;
-        if (count($listidstudents)) {
-            $notifiedS = [];
-            foreach ($listidstudents as $id) {
-                $notifiedS[$id] = $notifiablestudents[$id];
+    switch ($formdata->send) {
+        case 'all':
+            if ($notifiablestudents) {
+                $msgresult = $notificationprocess->send_notifications($notifiablestudents);
             }
-            $msgresult = $notificationprocess->send_notifications($notifiedS);
-        }
+            break;
+        case 'selection':
+            $groups = [];
+            if (isset($formdata->groups) && count($formdata->groups)) {
+               $groups =  $formdata->groups;
+            }
+            $groupings = [];
+            if (isset($formdata->groupings) && count($formdata->groupings)) {
+               $groupings =  $formdata->groupings;
+            }
+            $grpNotifiedStudents = notifstudents::get_users_recipients($groups, $groupings);
+            if (count($grpNotifiedStudents)) {
+                $msgresult = $notificationprocess->send_notifications($grpNotifiedStudents);
+            }
+            break;
+        case 'selectionstudents':
+            $listidstudents = $formdata->students;
+            if (count($listidstudents)) {
+                $notifiedS = [];
+                foreach ($listidstudents as $id) {
+                    $notifiedS[$id] = $notifiablestudents[$id];
+                }
+                $msgresult = $notificationprocess->send_notifications($notifiedS);
+            }
+            break;
     }
 }
 
