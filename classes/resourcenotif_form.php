@@ -7,13 +7,11 @@
 namespace local_resourcenotif;
 
 use \local_resourcenotif\notifstudents;
-use \local_resourcenotif\notification;
 
 require_once($CFG->libdir.'/formslib.php');
 
 class resourcenotif_form extends \moodleform {
     public function definition() {
-        global $CFG;
 
         $mform = $this->_form;
         $customdata = $this->_customdata;
@@ -65,7 +63,7 @@ class resourcenotif_form extends \moodleform {
                 '<span class="fake-fitemtitle">' . get_string('selectedmembers', 'local_resourcenotif') . '</span>',
                 'selection'
             );
-            $mform->addGroup($selected, 'myselected', "", array('&nbsp;&nbsp;&nbsp;'), false);
+            $mform->addGroup($selected, 'myselected', "", ['&nbsp;&nbsp;&nbsp;'], false);
             $mform->disabledIf('groups[]', 'send', 'neq', 'selection');
             $mform->disabledIf('groupings[]', 'send', 'neq', 'selection');
             if ($sendok == false) {
@@ -87,11 +85,11 @@ class resourcenotif_form extends \moodleform {
 
         //message
         $mform->addElement('header', 'message', get_string('content', 'local_resourcenotif'));
-        $subjectlabel = \html_writer::tag('span', get_string('subject', 'local_resourcenotif'), array('class' => 'notificationgras'));
+        $subjectlabel = \html_writer::tag('span', get_string('subject', 'local_resourcenotif'), ['class' => 'notificationgras']);
         $msgbody = $customdata['formmsgbody'];
-        $msghtml = \html_writer::tag('p', $subjectlabel . $customdata['emailsubject'], array('class' => 'notificationlabel'))
-            . \html_writer::tag('p', get_string('body', 'local_resourcenotif'), array('class' => 'notificationlabel notificationgras'))
-            . \html_writer::tag('p', $msgbody, array('class' => 'notificationlabel'));
+        $msghtml = \html_writer::tag('p', $subjectlabel . $customdata['emailsubject'], ['class' => 'notificationlabel'])
+            . \html_writer::tag('p', get_string('body', 'local_resourcenotif'), ['class' => 'notificationlabel notificationgras'])
+            . \html_writer::tag('p', $msgbody, ['class' => 'notificationlabel']);
 
         $mform->addElement('html', $msghtml);
         $mform->setExpanded('message');
@@ -99,7 +97,7 @@ class resourcenotif_form extends \moodleform {
         $mform->addElement('header', 'complementheader', get_string('complement', 'local_resourcenotif') );
         $mform->setExpanded('complementheader');
         $mform->addElement('textarea', 'complement', null, ['rows' => 5, 'class' => 'complement', 'style' => 'resize:both;']);
-        $mform->setType('complement',PARAM_RAW);
+        $mform->setType('complement', PARAM_RAW);
 
         //-------------------------------------------------------------------------------
         // buttons
