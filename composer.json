@@ -1,0 +1,10 @@
+{
+    "name": "silecs/moodle-local_resourcenotif",
+    "type": "moodle-local",
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "extra": {
+        "installer-name": "resourcenotif"
+    }
+}
