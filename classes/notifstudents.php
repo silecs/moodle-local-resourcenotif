@@ -93,7 +93,7 @@ class notifstudents
         $students = $this->get_users_from_course('student');
         if (!empty($students)) {
             foreach ($students as $id => $student) {
-                $listStudent[$id] = user_get_user_details($student)['fullname'];
+                $listStudent[$id] = fullname($student);
             }
         }
         return $listStudent;
